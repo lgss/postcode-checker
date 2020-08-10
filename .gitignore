@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# sam build files
+.aws-sam
+
+# sam local invoke events
+.events
+samconfig.toml
+env.json
+
+# dotenv environment variables file
+.env.local
+.env.*.local
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+__pycache__
+*.pyc
+
+node_modules
+/dist
