@@ -38,23 +38,22 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <content-home/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import ContentHome from './components/ContentHome.vue';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    ContentHome,
   },
 
   data: () => ({
-    //
   }),
 };
 </script>
