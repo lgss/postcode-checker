@@ -2,12 +2,19 @@
   <div class="ma-6 pa-6">
     <notice-editor :notice="activeNotice" v-if="activeNotice"/>
     <v-main v-else>
-        <v-row>
+        <v-row> <!--Lockdown header-->
           <v-col>
             <h1>Lockdown notices</h1>
           </v-col>
         </v-row>
-        <v-row v-for="notice in notices" :key="notice.id">
+        <v-row v-if="notices.length == 0"> <!--Lockdown notices warning-->
+          <v-col>
+            <v-card class="pa-2">
+                  <v-card-title>You require at least 1 lockdown notice</v-card-title>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row v-else v-for="notice in notices" :key="notice.id"> <!--Lockdown notices-->
           <v-col>
             <v-card class="pa-2">
               <v-card-actions >
@@ -22,50 +29,51 @@
             </v-card>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row> <!--Lockdown notices buttons-->
           <v-col>
             <v-btn @click="newNotice">Add</v-btn>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row><!--Postcode groups header-->
           <v-col>
             <h1>Postcode groups</h1>
           </v-col>
         </v-row>
-        <v-row class="col-lg-8 col-xs-12">
-          <v-col class="col-4">
-            <v-text-field label="Filter ..." outlined v-model="groupFilter" />
-            <v-list outlined>
-              <v-list-item-group color="primary">
-                <v-list-item
-                  v-for="postcodeGroup in filteredPostcodeGroups"
-                  :key="postcodeGroup.id"
-                  @click="loadGroup(postcodeGroup)">
-                    <v-list-item-content>
-                      <v-list-item-title v-text="postcodeGroup.name"></v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-col>
-          <v-col class="col-8">
-          
-            <div >
-              <v-text-field outlined :disabled="!activeGroup" v-model="activeGroupName"></v-text-field>
-              <v-textarea 
-                v-model="activeGroupCodes"
-                :disabled="!activeGroup"
-                rows = "10"
-                auto-grow
-                outlined>   
-              </v-textarea>
-            </div>
+        <v-row><!--Postcode groups-->
+          <v-col cols="12" md="8" lg="8">
+            <v-row> <!--Postcode groups container-->
+              <v-col cols="12" md="4" lg="4"> <!--Postcode groups-->
+                <v-text-field label="Filter ..." outlined v-model="groupFilter" />
+                <v-list outlined>
+                  <v-list-item-group color="primary">
+                    <v-list-item
+                      v-for="postcodeGroup in filteredPostcodeGroups"
+                      :key="postcodeGroup.id"
+                      @click="loadGroup(postcodeGroup)">
+                        <v-list-item-content>
+                          <v-list-item-title v-text="postcodeGroup.name"></v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-col>
+              <v-col cols="12" md="8" lg="8"> <!--Active group postcodes-->
+                  <v-text-field outlined :disabled="!activeGroup" v-model="activeGroupName"></v-text-field>
+                  <v-textarea 
+                    v-model="activeGroupCodes"
+                    :disabled="!activeGroup"
+                    rows = "10"
+                    auto-grow
+                    outlined>   
+                  </v-textarea>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row> <!--Postcode group buttoms-->
           <v-col class="col-4">
             <v-btn @click="newGroup">Add</v-btn>
-            <v-btn @click="delGroup">Delete</v-btn>
+            <v-btn @click="delGroup(activeGroup.id)">Delete</v-btn>
           </v-col>
           <v-col class="col-8">
             <v-btn @click="saveGroup">Save</v-btn>
@@ -144,9 +152,8 @@ export default {
   },
 
   methods: {
-    groupIndexById(id) {
-      return this.postcodeGroups.findIndex(x => x.id === id)
-    },
+
+    /* -- NOTICES -- */
     newNotice() {
       var uid = uuidv4();
       this.notices.push({
@@ -161,13 +168,19 @@ export default {
       this.activeNotice = notice;
     },
     deleteNotice(id) {
-      id
       // comfirm delete
       // delete on API
       const idx = this.notices.findIndex(x => x.id === id)
       this.notices.splice(idx, 1)
     },
-
+    groupIndexById(id) {
+      return this.postcodeGroups.findIndex(x => x.id === id)
+    },
+    clearActiveNotice(){
+      this.activeNotice = null;
+    },
+    
+    /* -- POSTCODE GROUPS -- */
     loadGroup(group){
       this.activeGroup = Object.assign({}, group)
     },
@@ -176,11 +189,15 @@ export default {
       this.postcodeGroups.push({
         id: uid,
         name: 'New group',
-        content: ''
+        content: ' '
       })
     },
     delGroup(id){
-      id
+      // comfirm delete
+      // delete on API
+      const idx = this.postcodeGroups.findIndex(x => x.id === id)
+      this.postcodeGroups.splice(idx, 1)
+      this.activeGroup = null
     },
     saveGroup(){
       // TODO: save to web service
