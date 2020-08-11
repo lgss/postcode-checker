@@ -34,11 +34,11 @@
         </v-row>
         <v-row class="col-lg-8 col-xs-12">
           <v-col class="col-4">
-            <v-text-field label="Filter ..." outlined />
+            <v-text-field label="Filter ..." outlined v-model="groupFilter" />
             <v-list outlined>
               <v-list-item-group color="primary">
                 <v-list-item
-                  v-for="postcodeGroup in postcodeGroups"
+                  v-for="postcodeGroup in filteredPostcodeGroups"
                   :key="postcodeGroup.id"
                   @click="loadGroup(postcodeGroup)">
                     <v-list-item-content>
@@ -50,19 +50,11 @@
           </v-col>
           <v-col class="col-8">
           
-            <div v-if="activeGroup">
-              <v-text-field outlined v-model="activeGroup.name"></v-text-field>
+            <div >
+              <v-text-field outlined :disabled="!activeGroup" v-model="activeGroupName"></v-text-field>
               <v-textarea 
-                v-model="activeGroup.postcodes"
-                rows = "10"
-                auto-grow
-                outlined>   
-              </v-textarea>
-            </div>
-            <div v-else outlined>
-              <v-text-field outlined value="Select a group ..."></v-text-field>
-              <v-textarea 
-                value="Select a group ..."
+                v-model="activeGroupCodes"
+                :disabled="!activeGroup"
                 rows = "10"
                 auto-grow
                 outlined>   
@@ -92,6 +84,7 @@ export default {
   components: {NoticeEditor},
   data() {
     return {
+      groupFilter: '',
       notices: [
         {
           id: '1',
@@ -127,10 +120,33 @@ export default {
 
 
   computed:{
-
+    filteredPostcodeGroups() {
+      const filstr = this.groupFilter.toLowerCase()
+      return this.postcodeGroups.filter(x => filstr.length === 0 || x.name.toLowerCase().includes(filstr))
+    },
+    activeGroupName() {
+      if (this.activeGroup) 
+        return this.activeGroup.name
+        
+      return 'Select a group...'
+    },
+    activeGroupCodes: {
+      get: function () {
+        if (!this.activeGroup)
+          return "Select a group ..."
+        return this.activeGroup.postcodes.join('\n')
+      },
+      set: function (newValue) {
+        //TODO: fix post code format, e.g. only valid chars and correct spaces
+        this.activeGroup.postcodes = newValue.split('\n').map(x => x.toUpperCase()) 
+      } 
+    }
   },
 
   methods: {
+    groupIndexById(id) {
+      return this.postcodeGroups.findIndex(x => x.id === id)
+    },
     newNotice() {
       var uid = uuidv4();
       this.notices.push({
@@ -148,11 +164,12 @@ export default {
       id
       // comfirm delete
       // delete on API
-      // then delete from collection
+      const idx = this.notices.findIndex(x => x.id === id)
+      this.notices.splice(idx, 1)
     },
 
     loadGroup(group){
-      this.activeGroup = group
+      this.activeGroup = Object.assign({}, group)
     },
     newGroup(){
       var uid = uuidv4();
@@ -165,10 +182,14 @@ export default {
     delGroup(id){
       id
     },
-    saveGroup(id){
-      id
+    saveGroup(){
+      // TODO: save to web service
+      this.postcodeGroups[this.groupIndexById(this.activeGroup.id)] = this.activeGroup
+      this.activeGroup = null
     },
-    cancelGroup(){}
+    cancelGroup(){
+      this.activeGroup = null
+    }
     
   }
 }
