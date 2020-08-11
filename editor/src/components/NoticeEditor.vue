@@ -1,5 +1,6 @@
 <template>
   <v-main app>
+    <h2>ID: {{notice.id}}</h2>
     <v-row>
       <v-col class="col-8">
         <v-text-field outlined label="Name" v-model="notice.name"/>
@@ -10,7 +11,6 @@
     </v-row>
     <v-row>
       <v-col class="col-8">
-        <!-- <rich-text-editor label="Message" v-model="notice.content" rows = "10" auto-grow></rich-text-editor> -->
         <v-textarea label="Message" v-model="notice.content" rows = "10" auto-grow outlined></v-textarea>
       </v-col>
       <v-col class="col-4">

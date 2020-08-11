@@ -7,16 +7,18 @@
             <h1>Lockdown notices</h1>
           </v-col>
         </v-row>
-        <v-row v-for="notice in notices" :key="notice.id" @click="loadNotice(notice)">
+        <v-row v-for="notice in notices" :key="notice.id">
           <v-col>
             <v-card class="pa-2">
-              <v-card-title>{{notice.name}}</v-card-title>
-              <v-card-subtitle v-if="notice.default">
-                Default content (will be shown when there is no match)
-              </v-card-subtitle>            
-              <v-card-subtitle v-else>
-                Applies to {{notice.postcodes.length}} postcodes
-              </v-card-subtitle>
+              <v-card-actions >
+                <v-container left @click="loadNotice(notice)" style="cursor: pointer">
+                  <v-card-title>{{notice.name}}</v-card-title>
+                  <v-card-subtitle v-if="notice.default">Default content (will be shown when there is no match)</v-card-subtitle>            
+                  <v-card-subtitle v-else>Applies to {{notice.postcodes.length}} postcodes</v-card-subtitle>
+                </v-container>
+                <v-spacer></v-spacer>
+                <v-btn right icon @click="deleteNotice(notice.id)"><v-icon>mdi-delete</v-icon></v-btn>
+              </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
@@ -38,11 +40,10 @@
                 <v-list-item
                   v-for="postcodeGroup in postcodeGroups"
                   :key="postcodeGroup.id"
-                  @click="loadGroup(postcodeGroup)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title v-text="postcodeGroup.name"></v-list-item-title>
-                  </v-list-item-content>
+                  @click="loadGroup(postcodeGroup)">
+                    <v-list-item-content>
+                      <v-list-item-title v-text="postcodeGroup.name"></v-list-item-title>
+                    </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
             </v-list>
