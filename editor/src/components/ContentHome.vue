@@ -30,10 +30,10 @@
             <h1>Postcode groups</h1>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="col-lg-8 col-xs-12">
           <v-col class="col-4">
-            <v-text-field label="Filter" />
-            <v-list shaped>
+            <v-text-field label="Filter ..." outlined />
+            <v-list outlined>
               <v-list-item-group color="primary">
                 <v-list-item
                   v-for="postcodeGroup in postcodeGroups"
@@ -50,24 +50,43 @@
           <v-col class="col-8">
           
             <div v-if="activeGroup">
+              <v-text-field outlined v-model="activeGroup.name"></v-text-field>
               <v-textarea 
-              v-model="activeGroup.postcodes"
-              rows = "10"
-              auto-grow>   
+                v-model="activeGroup.postcodes"
+                rows = "10"
+                auto-grow
+                outlined>   
               </v-textarea>
             </div>
-            <div v-else>
-              Select a group ...
+            <div v-else outlined>
+              <v-text-field outlined value="Select a group ..."></v-text-field>
+              <v-textarea 
+                value="Select a group ..."
+                rows = "10"
+                auto-grow
+                outlined>   
+              </v-textarea>
             </div>
           </v-col>
-          <v-btn @click="newGroup">Add</v-btn>
         </v-row>
+        <v-row>
+          <v-col class="col-4">
+            <v-btn @click="newGroup">Add</v-btn>
+            <v-btn @click="delGroup">Delete</v-btn>
+          </v-col>
+          <v-col class="col-8">
+            <v-btn @click="saveGroup">Save</v-btn>
+            <v-btn @click="cancelGroup">Cancel</v-btn>
+          </v-col>
+        </v-row>     
     </v-main>
   </div>
 </template>
 
 <script>
 import NoticeEditor from '@/components/NoticeEditor.vue'
+import { v4 as uuidv4 } from 'uuid';
+
 export default {
   components: {NoticeEditor},
   data() {
@@ -112,8 +131,9 @@ export default {
 
   methods: {
     newNotice() {
+      var uid = uuidv4();
       this.notices.push({
-        id: 'a new guid', //TODO: generate Id
+        id: uid, 
         name: 'New notice',
         default: false,
         content: '',
@@ -129,16 +149,26 @@ export default {
       // delete on API
       // then delete from collection
     },
+
+    loadGroup(group){
+      this.activeGroup = group
+    },
     newGroup(){
+      var uid = uuidv4();
       this.postcodeGroups.push({
-        id: 'new guid',
+        id: uid,
         name: 'New group',
         content: ''
       })
     },
-    loadGroup(group){
-      this.activeGroup = group
-    }
+    delGroup(id){
+      id
+    },
+    saveGroup(id){
+      id
+    },
+    cancelGroup(){}
+    
   }
 }
 </script>
