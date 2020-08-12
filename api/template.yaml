@@ -1,0 +1,179 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Simple web service for querying and managing postcode notices
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName:
+        Fn::Join:
+        - ''
+        - [Ref: Stage, -postcoder]
+      CorsConfiguration:
+        CorsRules:
+        - AllowedHeaders: ['*']
+          AllowedMethods: [GET]
+          AllowedOrigins: ['*']
+          ExposedHeaders: [Date]
+          Id: postcoderCORSGetRule
+          MaxAge: '3600'
+        - AllowedHeaders: ['*']
+          AllowedMethods: [PUT]
+          AllowedOrigins: ['*']
+          ExposedHeaders: [Date]
+          Id: postcoderCORSPutRule
+          MaxAge: '3600'
+  
+  Table:
+    Type: AWS::Serverless::SimpleTable
+    TableName:
+      Fn::Join:
+      - ''
+      - [Ref: Stage, -postcoder]
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      - AttributeName: doctype
+        KeyType: RANGE
+  
+  PostcoderApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: Stage
+      Cors:
+        AllowMethods: "'GET'"
+        AllowHeaders: "'authorization,content-type'"
+        AllowOrigin: "'*'"
+      OpenApiVersion: '2.0'
+
+  PostcoderEditorApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: Stage
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'authorization,content-type'"
+        AllowOrigin: "'*'"
+      OpenApiVersion: '2.0'
+
+  GetPostcode:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: postcode.query
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Postcode:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderApi
+            Path: /query/{postcode}
+            Method: get
+
+  GetPostcodeEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: postcode.query
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Postcode:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /query/{postcode}
+            Method: get
+
+  GetGroupsEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: group.get
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Postcode:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderApi
+            Path: /groups
+            Method: get
+
+  GetGroupEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: group.get
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Postcode:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderApi
+            Path: /groups/{id}
+            Method: get
+
+  PutGroupEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: group.create
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Postcode:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderApi
+            Path: /group/{id}
+            Method: put
