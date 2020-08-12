@@ -1,6 +1,10 @@
 <template >
   <div class="ma-6 pa-6">
-    <notice-editor :notice="activeNotice" v-if="activeNotice"/>
+    <notice-editor 
+      :notice="activeNotice" 
+      v-if="activeNotice" 
+      @save="saveNotice"
+      @cancel="activeNotice=null"/>
     <v-main v-else>
         <v-row> <!--Lockdown header-->
           <v-col>
@@ -165,7 +169,14 @@ export default {
       })
     },
     loadNotice(notice) {
-      this.activeNotice = notice;
+      this.activeNotice = Object.assign({}, notice); // edit a copy
+    },
+    saveNotice(notice) {
+      // save to DB
+      // if unsuccessful, error, exit
+      const idx = this.notices.findIndex(x => x.id === notice.id)
+      this.notices[idx] = notice
+      this.activeNotice = null
     },
     deleteNotice(id) {
       // comfirm delete
@@ -175,9 +186,6 @@ export default {
     },
     groupIndexById(id) {
       return this.postcodeGroups.findIndex(x => x.id === id)
-    },
-    clearActiveNotice(){
-      this.activeNotice = null;
     },
     
     /* -- POSTCODE GROUPS -- */

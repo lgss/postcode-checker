@@ -26,19 +26,13 @@
 <script>
 export default {
   props: ['notice'],
-  data() {
-    return {
-      nothing: false
-    }
-  },
   methods: {
     save() {
-      //this.$emit('input', )
+      this.$emit('save', this.notice)
     },
-    cancel() {this.$parent.clearActiveNotice()},
+    cancel() {this.$emit('cancel')},
     addGroup(){},
     removeGroup(){}
   }
-  
 }
 </script>
