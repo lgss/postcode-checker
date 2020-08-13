@@ -2,6 +2,7 @@
   <v-container fluid>
     <notice-editor 
       :notice="activeNotice" 
+      :postcodeGroups="postcodeGroups"
       v-if="activeNotice" 
       @save="saveNotice"
       @cancel="activeNotice=null"/>

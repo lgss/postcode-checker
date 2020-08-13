@@ -1,5 +1,21 @@
 <template>
-  <v-main app flui>
+  <v-main app fluid>
+    <v-dialog v-model="selectGroup">
+      <v-card style="max-width:450px">
+        <v-card-title>
+          Select group
+        </v-card-title>
+        <v-card-text>
+          list of groups go here
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn color="success" @click="processGroup">Select group</v-btn>
+          <v-btn @click="selectGroup = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-btn @click="selectGroup = true">Show/Hide</v-btn>
     <v-row>
       <v-col col="12" xs="12" sm="12" md="12" lg="8" xl="8">
           <v-text-field outlined label="Name" v-model="notice.name"/>
@@ -25,7 +41,14 @@
 
 <script>
 export default {
-  props: ['notice'],
+  data() { 
+      return {
+      selectGroup: false,
+      add: true,
+      selectedGroup: null
+    }
+  },
+  props: ['notice', 'postcodeGroups'],
   methods: {
     save() {
       this.notice.postcodes = this.notice.postcodes.replace(',', '\n')
@@ -33,8 +56,24 @@ export default {
       this.$emit('save', this.notice)
     },
     cancel() {this.$emit('cancel')},
-    addGroup(){},
-    removeGroup(){}
+    addGroup(){
+      this.addGroup = true
+      this.selectGroup = true
+      //get the group
+      //this.notices.postcodes.concat(group.postcodes)
+    },
+    removeGroup(){
+      this.addGroup = false
+      this.selectGroup = true
+      // get the group
+      //this.notice.postcodes = this.notice.postcodes.filter(x => !group.postcodes.contains(x))
+    },
+    processGroup() {
+      if (this.add)
+        this.notices.postcodes.concat(this.selectedGroup.postcodes)
+      else
+        this.notice.postcodes = this.notice.postcodes.filter(x => !this.selectedGroup.postcodes.contains(x))
+    }
   }
 }
 </script>
