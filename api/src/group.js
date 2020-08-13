@@ -1,14 +1,12 @@
 const { response } = require('./util')
 const db = require('./db')
 
-exports.create = (event, context, callback) => {
-    let now = new Date().toISOString()
+exports.save = (event, context, callback) => {
+    body = JSON.parse(event.body)
     let item = {
-        ...JSON.parse(event.body),
+        ...body,
         id: event.pathParameters.id,
-        doctype: "group",
-        createdAt: now,
-        modifiedAt: now
+        sortkey: "group",
     };
     return db.simple_create(event, item, callback);
 }
@@ -18,6 +16,6 @@ exports.get = (event, context, callback) => {
     if(id){
         return db.simple_get(event, event.pathParameters.id, callback);
     } else {
-        return db.simple_scan(event, 'doctype', 'group', callback);
+        return db.simple_scan(event, 'sortkey', 'group', callback);
     }
 }
