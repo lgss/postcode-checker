@@ -38,7 +38,7 @@ Resources:
     KeySchema:
       - AttributeName: id
         KeyType: HASH
-      - AttributeName: doctype
+      - AttributeName: sortkey
         KeyType: RANGE
   
   PostcoderApi:
@@ -63,52 +63,6 @@ Resources:
         AllowOrigin: "'*'"
       OpenApiVersion: '2.0'
 
-  GetPostcode:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: postcode.query
-      Runtime: nodejs12.x
-      CodeUri: src/
-      Policies:
-      - DynamoDBCrudPolicy:
-          TableName:
-            Ref: Table
-      Environment:
-        Variables:
-          TABLE_NAME:
-            Ref: Table
-      Events:
-        Postcode:
-          Type: Api
-          Properties:
-            RestApiId:
-              Ref: PostcoderApi
-            Path: /query/{postcode}
-            Method: get
-
-  GetPostcodeEditor:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: postcode.query
-      Runtime: nodejs12.x
-      CodeUri: src/
-      Policies:
-      - DynamoDBCrudPolicy:
-          TableName:
-            Ref: Table
-      Environment:
-        Variables:
-          TABLE_NAME:
-            Ref: Table
-      Events:
-        Postcode:
-          Type: Api
-          Properties:
-            RestApiId:
-              Ref: PostcoderEditorApi
-            Path: /query/{postcode}
-            Method: get
-
   GetGroupsEditor:
     Type: AWS::Serverless::Function
     Properties:
@@ -124,41 +78,25 @@ Resources:
           TABLE_NAME:
             Ref: Table
       Events:
-        Postcode:
+        Groups:
           Type: Api
           Properties:
             RestApiId:
-              Ref: PostcoderApi
-            Path: /groups
+              Ref: PostcoderEditorApi
+            Path: /group
             Method: get
-
-  GetGroupEditor:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: group.get
-      Runtime: nodejs12.x
-      CodeUri: src/
-      Policies:
-      - DynamoDBCrudPolicy:
-          TableName:
-            Ref: Table
-      Environment:
-        Variables:
-          TABLE_NAME:
-            Ref: Table
-      Events:
-        Postcode:
+        Group:
           Type: Api
           Properties:
             RestApiId:
-              Ref: PostcoderApi
-            Path: /groups/{id}
+              Ref: PostcoderEditorApi
+            Path: /group/{id}
             Method: get
 
   PutGroupEditor:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: group.create
+      Handler: group.save
       Runtime: nodejs12.x
       CodeUri: src/
       Policies:
@@ -170,10 +108,86 @@ Resources:
           TABLE_NAME:
             Ref: Table
       Events:
-        Postcode:
+        Group:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /group/{id}
+            Method: put
+
+  PutNoticeEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: notice.save
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Notice:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /notice/{id}
+            Method: put
+
+  GetNoticeEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: notice.get
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Notice:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /notice/{id}
+            Method: get
+        Notices:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /notice
+            Method: get
+
+  QueryPostode:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: notice.byPostcode
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Psstcode:
           Type: Api
           Properties:
             RestApiId:
               Ref: PostcoderApi
-            Path: /group/{id}
-            Method: put
+            Path: /query/{postcode}
+            Method: get
