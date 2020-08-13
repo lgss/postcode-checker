@@ -42,7 +42,7 @@
             </v-tooltip>
           </template>
         </v-switch>
-        <label>Postcodes</label>
+        <label>{{postcodeCount}} postcodes</label>
         <v-tooltip top>
           <template v-slot:activator="{ on, attrs }">
             <v-icon v-bind="attrs" v-on="on">mdi-information</v-icon>
@@ -108,7 +108,8 @@ export default {
     postcodeBlock: {
       get: function() {return displayPostcodes(this.notice.postcodes || [])},
       set: function(value) {this.notice.postcodes = parsePostcodes(value)}
-    }
+    },
+    postcodeCount() {return this.notice.postcodes.length}
   },
   methods: {
     save() {
