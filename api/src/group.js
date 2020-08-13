@@ -18,6 +18,6 @@ exports.get = (event, context, callback) => {
     if(id){
         return db.simple_get(event, event.pathParameters.id, callback);
     } else {
-        return db.simple_scan(event, 'type', 'group', callback);
+        return db.simple_scan(event, 'doctype', 'group', callback);
     }
 }
