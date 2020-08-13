@@ -2,10 +2,6 @@ const { response } = require('./util')
 const db = require('./db')
 
 exports.create = (event, context, callback) => {
-    if (!event.body) return callback(response(400,"Expected group data not present in request body"))
-}
-
-exports.create = (event, context, callback) => {
     let now = new Date().toISOString()
     let item = {
         ...JSON.parse(event.body),
