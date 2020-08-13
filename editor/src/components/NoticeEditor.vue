@@ -6,8 +6,7 @@
           Select group
         </v-card-title>
         <v-card-text>
-          //list of groups go here
-          <v-radio-group v-model="dialogm1" column>
+          <v-radio-group column>
             <v-radio-group v-model="postcodeGroups.postcodes">
               <v-radio 
                 v-for="postcode in postcodeGroups" 
@@ -24,7 +23,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
     <v-row>
       <v-col col="12" xs="12" sm="12" md="12" lg="8" xl="8">
           <v-text-field outlined label="Name" v-model="notice.name"/>
