@@ -136,11 +136,16 @@ export default {
       const filstr = this.groupFilter.toLowerCase()
       return this.postcodeGroups.filter(x => filstr.length === 0 || x.name.toLowerCase().includes(filstr))
     },
-    activeGroupName() {
-      if (this.activeGroup) 
-        return this.activeGroup.name
+    activeGroupName: {
+      get: function() {
+        if (this.activeGroup) 
+          return this.activeGroup.name
         
-      return 'Select a group...'
+        return 'Select a group...'
+      },
+      set: function (value) {
+        this.activeGroup.name = value
+      }
     },
     activeGroupCodes: {
       get: function () {
@@ -198,7 +203,8 @@ export default {
       this.postcodeGroups.push({
         id: uid,
         name: 'New group',
-        content: ' '
+        content: '',
+        postcodes: []
       })
     },
     delGroup(id){
@@ -210,7 +216,7 @@ export default {
     },
     saveGroup(){
       // TODO: save to web service
-      this.postcodeGroups[this.groupIndexById(this.activeGroup.id)] = this.activeGroup
+      Object.assign(this.postcodeGroups[this.groupIndexById(this.activeGroup.id)], this.activeGroup)
       this.activeGroup = null
     },
     cancelGroup(){
