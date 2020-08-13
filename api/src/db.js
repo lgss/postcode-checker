@@ -1,4 +1,7 @@
-const {createResponse} = require('./util')  
+const AWS = require('aws-sdk');
+exports.dynamo = new AWS.DynamoDB.DocumentClient();
+const {response: createResponse} = require('./util');
+const tableName = process.env.TABLE_NAME;
 
 exports.simple_create = (event, newItem, callback) => {
     return this.dynamo.put({
@@ -73,6 +76,18 @@ exports.simple_scan = (event, attribute, value, callback) => {
         callback(null, createResponse(200, JSON.stringify(data.Items)));
     }).catch( (err) => { 
         console.log(`SIMPLE SCAN FAILED WITH ERROR: ${err}`);
+        callback(null, createResponse(500, JSON.stringify(err)));
+    });
+}
+exports.advanced_scan = (event, params, callback) => {
+
+    params.TableName = tableName;    
+    let dbScan = (params) => { return this.dynamo.scan(params).promise() };
+    
+    dbScan(params).then( (data) => {
+        callback(null, createResponse(200, JSON.stringify(data.Items)));
+    }).catch( (err) => { 
+        console.log(`SCAN FAILED WITH ERROR: ${err}`);
         callback(null, createResponse(500, JSON.stringify(err)));
     });
 }
