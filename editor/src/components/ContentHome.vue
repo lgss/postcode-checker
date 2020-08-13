@@ -1,5 +1,5 @@
-<template >
-  <div class="ma-6 pa-6">
+<template>
+  <v-container fluid>
     <notice-editor 
       :notice="activeNotice" 
       v-if="activeNotice" 
@@ -28,7 +28,7 @@
                   <v-card-subtitle v-else>Applies to {{notice.postcodes.length}} postcodes</v-card-subtitle>
                 </v-container>
                 <v-spacer></v-spacer>
-                <v-btn right icon @click="deleteNotice(notice.id)"><v-icon>mdi-delete</v-icon></v-btn>
+                <v-btn right icon @click="deleteNotice(notice.id)"><v-icon >mdi-delete</v-icon></v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -85,7 +85,7 @@
           </v-col>
         </v-row>     
     </v-main>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -170,6 +170,7 @@ export default {
     },
     loadNotice(notice) {
       this.activeNotice = Object.assign({}, notice); // edit a copy
+      this.activeNotice.postcodes = this.activeNotice.postcodes.join('\n')
     },
     saveNotice(notice) {
       // save to DB

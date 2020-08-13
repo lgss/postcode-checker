@@ -1,5 +1,5 @@
 <template>
-  <v-main app>
+  <v-main app flui>
     <v-row>
       <v-col col="12" xs="12" sm="12" md="12" lg="8" xl="8">
           <v-text-field outlined label="Name" v-model="notice.name"/>
@@ -28,6 +28,8 @@ export default {
   props: ['notice'],
   methods: {
     save() {
+      this.notice.postcodes = this.notice.postcodes.replace(',', '\n')
+      this.notice.postcodes = this.notice.postcodes.split('\n')
       this.$emit('save', this.notice)
     },
     cancel() {this.$emit('cancel')},
