@@ -15,7 +15,7 @@
         <v-row v-if="notices.length == 0"> <!--Lockdown notices warning-->
           <v-col>
             <v-card class="pa-2">
-                  <v-card-title>You require at least 1 lockdown notice</v-card-title>
+              <v-card-title>You require at least 1 lockdown notice</v-card-title>
             </v-card>
           </v-col>
         </v-row>

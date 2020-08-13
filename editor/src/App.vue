@@ -3,8 +3,7 @@
     <v-app-bar
       app
       color="primary"
-      dark
-    >
+      dark>
       <h1>Local Lockdown Editor by LGSS Digital</h1>
       <v-spacer></v-spacer>
     </v-app-bar>
