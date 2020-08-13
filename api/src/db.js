@@ -1,3 +1,5 @@
+const {createResponse} = require('./util')  
+
 exports.simple_create = (event, newItem, callback) => {
     return this.dynamo.put({
         TableName: tableName,
