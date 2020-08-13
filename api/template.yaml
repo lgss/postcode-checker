@@ -184,7 +184,7 @@ Resources:
           TABLE_NAME:
             Ref: Table
       Events:
-        Psstcode:
+        Postcode:
           Type: Api
           Properties:
             RestApiId:
