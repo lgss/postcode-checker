@@ -4,7 +4,7 @@
       app
       color="primary"
       dark>
-      <h1>Local Lockdown Editor by LGSS Digital</h1>
+      <h1>Local Lockdown Editor</h1> <h3 style="padding-left: 5px;">by LGSS Digital</h3>
       <v-spacer></v-spacer>
     </v-app-bar>
     <v-main>

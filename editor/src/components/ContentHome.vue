@@ -6,7 +6,7 @@
       v-if="activeNotice" 
       @save="saveNotice"
       @cancel="activeNotice=null"/>
-    <v-main v-else>
+    <v-container v-else>
         <v-row> <!--Lockdown header-->
           <v-col>
             <h1>Lockdown notices</h1>
@@ -15,7 +15,7 @@
         <v-row v-if="notices.length == 0"> <!--Lockdown notices warning-->
           <v-col>
             <v-card class="pa-2">
-              <v-card-title>You require at least 1 lockdown notice</v-card-title>
+              <v-card-title>You don't have any notices :(</v-card-title>
             </v-card>
           </v-col>
         </v-row>
@@ -48,9 +48,9 @@
           <v-col cols="12" md="8" lg="8">
             <v-row> <!--Postcode groups container-->
               <v-col cols="12" md="4" lg="4"> <!--Postcode groups-->
-                <v-text-field label="Filter ..." outlined v-model="groupFilter" />
-                <v-list outlined>
-                  <v-list-item-group color="primary">
+                <v-text-field label="Filter" outlined v-model="groupFilter" />
+                <v-list max-height="289px" class="limited-height" outlined>
+                  <v-list-item-group max-height="50px" color="primary">
                     <v-list-item
                       v-for="postcodeGroup in filteredPostcodeGroups"
                       :key="postcodeGroup.id"
@@ -68,7 +68,6 @@
                     v-model="activeGroupCodes"
                     :disabled="!activeGroup"
                     rows = "10"
-                    auto-grow
                     outlined>   
                   </v-textarea>
               </v-col>
@@ -85,7 +84,7 @@
             <v-btn @click="cancelGroup">Cancel</v-btn>
           </v-col>
         </v-row>     
-    </v-main>
+    </v-container>
   </v-container>
 </template>
 
@@ -151,7 +150,7 @@ export default {
     activeGroupCodes: {
       get: function () {
         if (!this.activeGroup)
-          return "Select a group ..."
+          return ""
         return this.activeGroup.postcodes.join('\n')
       },
       set: function (newValue) {
@@ -176,7 +175,6 @@ export default {
     },
     loadNotice(notice) {
       this.activeNotice = Object.assign({}, notice); // edit a copy
-      this.activeNotice.postcodes = this.activeNotice.postcodes.join('\n')
     },
     saveNotice(notice) {
       // save to DB
@@ -227,3 +225,13 @@ export default {
   }
 }
 </script>
+
+<style>
+  textarea {
+    text-transform: uppercase;
+  }
+
+  .limited-height {
+    overflow-y: scroll;
+  }
+</style>
