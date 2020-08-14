@@ -20,6 +20,16 @@
           </v-col>
         </v-row>
         <v-row v-else v-for="notice in notices" :key="notice.id"> <!--Lockdown notices-->
+        <v-dialog v-model="noticeDialog" max-width="290">
+            <v-card>
+              <v-card-title class="headline">Are you sure?</v-card-title>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text @click="noticeDialog = false">No</v-btn>
+                <v-btn color="danger" text @click="deleteNotice(deletingNoticeID); noticeDialog = false">Yes</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
           <v-col>
             <v-card class="pa-2">
               <v-card-actions >
@@ -29,11 +39,13 @@
                   <v-card-subtitle v-else>Applies to {{notice.postcodes.length}} postcodes</v-card-subtitle>
                 </v-container>
                 <v-spacer></v-spacer>
-                <v-btn right icon @click="deleteNotice(notice.id)"><v-icon >mdi-delete</v-icon></v-btn>
+                <v-btn right icon @click="deletingNoticeID=notice.id; noticeDialog = true"><v-icon >mdi-delete</v-icon></v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
+          
         </v-row>
+        
         <v-row> <!--Lockdown notices buttons-->
           <v-col>
             <v-btn @click="newNotice">Add</v-btn>
@@ -77,12 +89,22 @@
         <v-row> <!--Postcode group buttoms-->
           <v-col class="col-4">
             <v-btn @click="newGroup">Add</v-btn>
-            <v-btn @click="delGroup(activeGroup.id)">Delete</v-btn>
+            <v-btn :disabled="!activeGroup" @click.stop="postcodeGroupDialog = true">Delete</v-btn>
           </v-col>
           <v-col class="col-8">
-            <v-btn @click="saveGroup">Save</v-btn>
-            <v-btn @click="cancelGroup">Cancel</v-btn>
+            <v-btn :disabled="!activeGroup" @click="saveGroup">Save</v-btn>
+            <v-btn :disabled="!activeGroup" @click="cancelGroup">Cancel</v-btn>
           </v-col>
+          <v-dialog v-model="postcodeGroupDialog" max-width="290">
+            <v-card>
+              <v-card-title class="headline">Are you sure?</v-card-title>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text @click="postcodeGroupDialog = false">No</v-btn>
+                <v-btn color="danger" text @click="delGroup(activeGroup.id); postcodeGroupDialog = false">Yes</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-row>     
     </v-container>
   </v-container>
@@ -126,7 +148,10 @@ export default {
         }
       ],
       activeNotice: null,
-      activeGroup: null
+      deletingNoticeID: null,
+      activeGroup: null,
+      noticeDialog: false,
+      postcodeGroupDialog: false
     }
   },
 
