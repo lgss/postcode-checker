@@ -116,6 +116,29 @@ Resources:
             Path: /group/{id}
             Method: put
 
+  DeleteGroupEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: group.delete
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Group:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /group/{id}
+            Method: delete
+
   PutNoticeEditor:
     Type: AWS::Serverless::Function
     Properties:
@@ -168,6 +191,29 @@ Resources:
               Ref: PostcoderEditorApi
             Path: /notice
             Method: get
+
+  DeleteNoticeEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: notice.delete
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Notice:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /notice/{id}
+            Method: delete
 
   QueryPostode:
     Type: AWS::Serverless::Function

@@ -21,6 +21,10 @@ exports.get = (event, context, callback) => {
     }
 };
 
+exports.delete = (event, context, callback) => {
+    return db.simple_delete(event, id, callback)
+}
+
 exports.byPostcode = (event, context, callback) => {
     let pc = event.pathParameters.postcode;
     let params = {
