@@ -113,24 +113,25 @@
 
 <script>
 import NoticeEditor from '@/components/NoticeEditor.vue'
+import {parsePostcodes, displayPostcodes} from '@/utils/postcode.js'
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
   components: {NoticeEditor},
   created() {
     Promise.all([
-    fetch(this.endpoint + '/notice')
-      .then((x) => x.json())
-      .then((x) => {
-          this.notices = x
-        }
-      ),
-    fetch(this.endpoint + '/group')
-      .then((x) => x.json())
-      .then((x) => {
-          this.postcodeGroups = x
-        }
-      )
+      fetch(this.endpoint + '/notice')
+        .then((x) => x.json())
+        .then((x) => {
+            this.notices = x
+          }
+        ),
+      fetch(this.endpoint + '/group')
+        .then((x) => x.json())
+        .then((x) => {
+            this.postcodeGroups = x
+          }
+        )
     ]).then(() => this.loading = false)
   },
   data() {
@@ -166,16 +167,9 @@ export default {
       }
     },
     activeGroupCodes: {
-      get: function () {
-        if (!this.activeGroup)
-          return ""
-        return this.activeGroup.postcodes.join('\n')
-      },
-      set: function (newValue) {
-        //TODO: fix post code format, e.g. only valid chars and correct spaces
-        this.activeGroup.postcodes = newValue.split('\n').map(x => x.toUpperCase()) 
-      } 
-    }
+      get: function() {return displayPostcodes(this.activeGroup)},
+      set: function(value) {this.activeGroup.postcodes = parsePostcodes(value)}
+    },
   },
 
   methods: {
@@ -235,7 +229,10 @@ export default {
     saveGroup(){
       fetch(this.endpoint + '/group/' + this.activeGroup.id, {
         method: 'PUT',
-        json: JSON.stringify(this.activeGroup)
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.activeGroup)
       }).then(() => {
         Object.assign(this.postcodeGroups[this.groupIndexById(this.activeGroup.id)], this.activeGroup)
         this.activeGroup = null
