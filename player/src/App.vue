@@ -3,7 +3,8 @@
     <Header />
     <img alt="Vue logo" src="./assets/logo.png">
     <div class="govuk-width-container ">
-      <router-view/>
+      <postcode-result/>
+      <!--<router-view/>-->
     </div>
     <Footer/>
   </div>
@@ -11,12 +12,14 @@
 
 <script>
 import Header from './components/Header.vue'
+import PostcodeResult from './components/PostcodeResult.vue'
 import Footer from './components/Footer.vue'
 
 export default {
   name: 'App',
   components: {
     Header,
+    PostcodeResult,
     Footer
   }
 }
