@@ -22,7 +22,7 @@ exports.get = (event, context, callback) => {
 };
 
 exports.delete = (event, context, callback) => {
-    return db.simple_delete(event, id, callback)
+    return db.simple_delete(event, event.pathParameters.id, callback)
 }
 
 exports.byPostcode = (event, context, callback) => {
