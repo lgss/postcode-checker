@@ -197,6 +197,8 @@ export default {
       return this.notices.findIndex(x => x.id === id)
     },
     saveNotice(){
+
+      this.activeNotice.postcodes = this.formatPostcodes(this.activeNotice.postcodes)
       fetch(this.endpoint + '/notice/' + this.activeNotice.id, {
         method: 'PUT',
         headers: {
@@ -250,8 +252,8 @@ export default {
       return this.postcodeGroups.findIndex(x => x.id === id)
     },
     saveGroup(){
-      //this.activeGroup.postcodes.forEach(postcode => { postcode.replace(/[^0-9 a-zA-Z]/g, '') });
-      this.activeGroup.postcodes.forEach((postcode, index) => this.activeGroup.postcodes[index] = postcode.replace(/[^0-9 a-zA-Z]/g, ''))
+      //remove non alpha-num chars
+      this.activeGroup.postcodes = this.formatPostcodes(this.activeGroup.postcodes)
 
       fetch(this.endpoint + '/group/' + this.activeGroup.id, {
         method: 'PUT',
@@ -266,6 +268,18 @@ export default {
     },
     cancelGroup(){
       this.activeGroup = null
+    },
+    formatPostcodes(postcodes){
+      //remove blanks
+      //remove non alpha numeric character
+      //add space in the correct place
+      var filtered = postcodes.filter(Boolean);
+      filtered.forEach((postcode, index) => {
+        filtered[index] = postcode.replace(/[^0-9a-zA-Z]/g, '')
+        filtered[index] = filtered[index].replace(/^(.*)(.{3})$/,'$1 $2')
+      });
+      return filtered
+
     }
   }
 }
