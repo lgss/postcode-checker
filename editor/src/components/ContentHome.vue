@@ -209,10 +209,15 @@ export default {
       })
     },
     deleteNotice(id) {
-      // comfirm delete
       // delete on API
-      const idx = this.notices.findIndex(x => x.id === id)
-      this.notices.splice(idx, 1)
+      fetch(this.endpoint + '/notice/' + id, {
+        method: 'DELETE',
+        
+      }).then(() => {
+        //delete locally
+        const idx = this.notices.findIndex(x => x.id === id)
+        this.notices.splice(idx, 1)
+      })
     },
 
     
@@ -229,12 +234,17 @@ export default {
         postcodes: []
       })
     },
-    delGroup(id){
-      // comfirm delete
+    delGroup(id) {
       // delete on API
-      const idx = this.postcodeGroups.findIndex(x => x.id === id)
-      this.postcodeGroups.splice(idx, 1)
-      this.activeGroup = null
+      fetch(this.endpoint + '/group/' + id, {
+        method: 'DELETE',
+        
+      }).then(() => {
+        //delete locally
+        const idx = this.postcodeGroups.findIndex(x => x.id === id)
+        this.postcodeGroups.splice(idx, 1)
+        this.activeGroup = null
+      })
     },
     groupIndexById(id) {
       return this.postcodeGroups.findIndex(x => x.id === id)
