@@ -1,6 +1,11 @@
 <template>
   <v-container fluid>
-    <span v-if="loading">Loading...</span>
+    <div class="text-center" v-if="loading">
+    <v-progress-circular
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+    </div>
     <notice-editor 
       :notice="activeNotice" 
       :postcodeGroups="postcodeGroups"
@@ -178,7 +183,6 @@ export default {
     newNotice() {
       var uid = uuidv4();
       this.notices.push({
-        endpoint: process.env.VUE_APP_EDITOR_API,
         id: uid, 
         name: 'New notice',
         default: false,
@@ -189,12 +193,20 @@ export default {
     loadNotice(notice) {
       this.activeNotice = Object.assign({}, notice); // edit a copy
     },
-    saveNotice(notice) {
-      // save to DB
-      // if unsuccessful, error, exit
-      const idx = this.notices.findIndex(x => x.id === notice.id)
-      this.notices[idx] = notice
-      this.activeNotice = null
+    noticeIndexById(id) {
+      return this.notices.findIndex(x => x.id === id)
+    },
+    saveNotice(){
+      fetch(this.endpoint + '/notice/' + this.activeNotice.id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.activeNotice)
+      }).then(() => {
+        Object.assign(this.notices[this.noticeIndexById(this.activeNotice.id)], this.activeNotice)
+        this.activeNotice = null
+      })
     },
     deleteNotice(id) {
       // comfirm delete
@@ -202,13 +214,11 @@ export default {
       const idx = this.notices.findIndex(x => x.id === id)
       this.notices.splice(idx, 1)
     },
-    groupIndexById(id) {
-      return this.postcodeGroups.findIndex(x => x.id === id)
-    },
+
     
     /* -- POSTCODE GROUPS -- */
     loadGroup(group){
-      this.activeGroup = Object.assign({}, group)
+      this.activeGroup = Object.assign({}, group) // edit a copy
     },
     newGroup(){
       var uid = uuidv4();
@@ -226,6 +236,9 @@ export default {
       this.postcodeGroups.splice(idx, 1)
       this.activeGroup = null
     },
+    groupIndexById(id) {
+      return this.postcodeGroups.findIndex(x => x.id === id)
+    },
     saveGroup(){
       fetch(this.endpoint + '/group/' + this.activeGroup.id, {
         method: 'PUT',
@@ -241,7 +254,6 @@ export default {
     cancelGroup(){
       this.activeGroup = null
     }
-    
   }
 }
 </script>
