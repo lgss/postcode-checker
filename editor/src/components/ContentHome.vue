@@ -1,9 +1,15 @@
 <template>
   <v-container fluid>
+    <div class="text-center" v-if="loading">
+    <v-progress-circular
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+    </div>
     <notice-editor 
       :notice="activeNotice" 
       :postcodeGroups="postcodeGroups"
-      v-if="activeNotice" 
+      v-else-if="activeNotice" 
       @save="saveNotice"
       @cancel="activeNotice=null"/>
     <v-container v-else>
@@ -112,41 +118,34 @@
 
 <script>
 import NoticeEditor from '@/components/NoticeEditor.vue'
+import {parsePostcodes, displayPostcodes} from '@/utils/postcode.js'
 import { v4 as uuidv4 } from 'uuid';
 
 export default {
   components: {NoticeEditor},
+  created() {
+    Promise.all([
+      fetch(this.endpoint + '/notice')
+        .then((x) => x.json())
+        .then((x) => {
+            this.notices = x
+          }
+        ),
+      fetch(this.endpoint + '/group')
+        .then((x) => x.json())
+        .then((x) => {
+            this.postcodeGroups = x
+          }
+        )
+    ]).then(() => this.loading = false)
+  },
   data() {
     return {
+      endpoint: process.env.VUE_APP_EDITOR_API,
       groupFilter: '',
-      notices: [
-        {
-          id: '1',
-          name: 'Default notice',
-          default: true,
-          content: 'This is some content',
-          postcodes: []
-        },
-        {
-          id: '2',
-          name: 'Fenland outbreak',
-          default: false,
-          content: 'This is some other content',
-          postcodes: ['CB4 2XY', 'TN22 3BU']
-        }
-      ],
-      postcodeGroups:[
-        {
-          id: '1',
-          name: 'NCC properties',
-          postcodes: ['NN1 1ED', 'NN16 0LL']
-        },
-         {
-          id: '2',
-          name: 'NCC Schools',
-          postcodes: ['NN9 6PA']
-        }
-      ],
+      loading: true,
+      notices: [],
+      postcodeGroups:[],
       activeNotice: null,
       deletingNoticeID: null,
       activeGroup: null,
@@ -173,16 +172,9 @@ export default {
       }
     },
     activeGroupCodes: {
-      get: function () {
-        if (!this.activeGroup)
-          return ""
-        return this.activeGroup.postcodes.join('\n')
-      },
-      set: function (newValue) {
-        //TODO: fix post code format, e.g. only valid chars and correct spaces
-        this.activeGroup.postcodes = newValue.split('\n').map(x => x.toUpperCase()) 
-      } 
-    }
+      get: function() {return displayPostcodes(this.activeGroup)},
+      set: function(value) {this.activeGroup.postcodes = parsePostcodes(value)}
+    },
   },
 
   methods: {
@@ -201,26 +193,39 @@ export default {
     loadNotice(notice) {
       this.activeNotice = Object.assign({}, notice); // edit a copy
     },
-    saveNotice(notice) {
-      // save to DB
-      // if unsuccessful, error, exit
-      const idx = this.notices.findIndex(x => x.id === notice.id)
-      this.notices[idx] = notice
-      this.activeNotice = null
+    noticeIndexById(id) {
+      return this.notices.findIndex(x => x.id === id)
+    },
+    saveNotice(){
+
+      this.activeNotice.postcodes = this.formatPostcodes(this.activeNotice.postcodes)
+      fetch(this.endpoint + '/notice/' + this.activeNotice.id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.activeNotice)
+      }).then(() => {
+        Object.assign(this.notices[this.noticeIndexById(this.activeNotice.id)], this.activeNotice)
+        this.activeNotice = null
+      })
     },
     deleteNotice(id) {
-      // comfirm delete
       // delete on API
-      const idx = this.notices.findIndex(x => x.id === id)
-      this.notices.splice(idx, 1)
+      fetch(this.endpoint + '/notice/' + id, {
+        method: 'DELETE',
+        
+      }).then(() => {
+        //delete locally
+        const idx = this.notices.findIndex(x => x.id === id)
+        this.notices.splice(idx, 1)
+      })
     },
-    groupIndexById(id) {
-      return this.postcodeGroups.findIndex(x => x.id === id)
-    },
+
     
     /* -- POSTCODE GROUPS -- */
     loadGroup(group){
-      this.activeGroup = Object.assign({}, group)
+      this.activeGroup = Object.assign({}, group) // edit a copy
     },
     newGroup(){
       var uid = uuidv4();
@@ -231,22 +236,51 @@ export default {
         postcodes: []
       })
     },
-    delGroup(id){
-      // comfirm delete
+    delGroup(id) {
       // delete on API
-      const idx = this.postcodeGroups.findIndex(x => x.id === id)
-      this.postcodeGroups.splice(idx, 1)
-      this.activeGroup = null
+      fetch(this.endpoint + '/group/' + id, {
+        method: 'DELETE',
+        
+      }).then(() => {
+        //delete locally
+        const idx = this.postcodeGroups.findIndex(x => x.id === id)
+        this.postcodeGroups.splice(idx, 1)
+        this.activeGroup = null
+      })
+    },
+    groupIndexById(id) {
+      return this.postcodeGroups.findIndex(x => x.id === id)
     },
     saveGroup(){
-      // TODO: save to web service
-      Object.assign(this.postcodeGroups[this.groupIndexById(this.activeGroup.id)], this.activeGroup)
-      this.activeGroup = null
+      //remove non alpha-num chars
+      this.activeGroup.postcodes = this.formatPostcodes(this.activeGroup.postcodes)
+
+      fetch(this.endpoint + '/group/' + this.activeGroup.id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.activeGroup)
+      }).then(() => {
+        Object.assign(this.postcodeGroups[this.groupIndexById(this.activeGroup.id)], this.activeGroup)
+        this.activeGroup = null
+      })
     },
     cancelGroup(){
       this.activeGroup = null
+    },
+    formatPostcodes(postcodes){
+      //remove blanks
+      //remove non alpha numeric character
+      //add space in the correct place
+      var filtered = postcodes.filter(Boolean);
+      filtered.forEach((postcode, index) => {
+        filtered[index] = postcode.replace(/[^0-9a-zA-Z]/g, '')
+        filtered[index] = filtered[index].replace(/^(.*)(.{3})$/,'$1 $2')
+      });
+      return filtered
+
     }
-    
   }
 }
 </script>
