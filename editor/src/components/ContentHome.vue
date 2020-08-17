@@ -1,9 +1,10 @@
 <template>
   <v-container fluid>
+    <span v-if="loading">Loading...</span>
     <notice-editor 
       :notice="activeNotice" 
       :postcodeGroups="postcodeGroups"
-      v-if="activeNotice" 
+      v-else-if="activeNotice" 
       @save="saveNotice"
       @cancel="activeNotice=null"/>
     <v-container v-else>
@@ -116,37 +117,29 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default {
   components: {NoticeEditor},
+  created() {
+    Promise.all([
+    fetch(this.endpoint + '/notice')
+      .then((x) => x.json())
+      .then((x) => {
+          this.notices = x
+        }
+      ),
+    fetch(this.endpoint + '/group')
+      .then((x) => x.json())
+      .then((x) => {
+          this.postcodeGroups = x
+        }
+      )
+    ]).then(() => this.loading = false)
+  },
   data() {
     return {
+      endpoint: process.env.VUE_APP_EDITOR_API,
       groupFilter: '',
-      notices: [
-        {
-          id: '1',
-          name: 'Default notice',
-          default: true,
-          content: 'This is some content',
-          postcodes: []
-        },
-        {
-          id: '2',
-          name: 'Fenland outbreak',
-          default: false,
-          content: 'This is some other content',
-          postcodes: ['CB4 2XY', 'TN22 3BU']
-        }
-      ],
-      postcodeGroups:[
-        {
-          id: '1',
-          name: 'NCC properties',
-          postcodes: ['NN1 1ED', 'NN16 0LL']
-        },
-         {
-          id: '2',
-          name: 'NCC Schools',
-          postcodes: ['NN9 6PA']
-        }
-      ],
+      loading: true,
+      notices: [],
+      postcodeGroups:[],
       activeNotice: null,
       deletingNoticeID: null,
       activeGroup: null,
@@ -191,6 +184,7 @@ export default {
     newNotice() {
       var uid = uuidv4();
       this.notices.push({
+        endpoint: process.env.VUE_APP_EDITOR_API,
         id: uid, 
         name: 'New notice',
         default: false,
@@ -239,9 +233,13 @@ export default {
       this.activeGroup = null
     },
     saveGroup(){
-      // TODO: save to web service
-      Object.assign(this.postcodeGroups[this.groupIndexById(this.activeGroup.id)], this.activeGroup)
-      this.activeGroup = null
+      fetch(this.endpoint + '/group/' + this.activeGroup.id, {
+        method: 'PUT',
+        json: JSON.stringify(this.activeGroup)
+      }).then(() => {
+        Object.assign(this.postcodeGroups[this.groupIndexById(this.activeGroup.id)], this.activeGroup)
+        this.activeGroup = null
+      })
     },
     cancelGroup(){
       this.activeGroup = null
