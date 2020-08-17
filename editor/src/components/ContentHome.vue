@@ -250,6 +250,9 @@ export default {
       return this.postcodeGroups.findIndex(x => x.id === id)
     },
     saveGroup(){
+      //this.activeGroup.postcodes.forEach(postcode => { postcode.replace(/[^0-9 a-zA-Z]/g, '') });
+      this.activeGroup.postcodes.forEach((postcode, index) => this.activeGroup.postcodes[index] = postcode.replace(/[^0-9 a-zA-Z]/g, ''))
+
       fetch(this.endpoint + '/group/' + this.activeGroup.id, {
         method: 'PUT',
         headers: {
