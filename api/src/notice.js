@@ -1,4 +1,4 @@
-const { response } = require("./util");
+const { response, formatPostcode } = require("./util");
 const db = require("./db");
 
 exports.save = (event, context, callback) => {
@@ -35,38 +35,39 @@ exports.byPostcode = (event) => {
         console.log(`SCAN FAILED WITH ERROR: ${err}`);
         return createResponse(500, JSON.stringify(err))
     }
-​
+    ​
     const success = (data) => data.Items.map((x) => `<notice>${x.content}</notice>`)
     
     let pc = event.pathParameters.postcode;
-    pc = pc.toUpperCase()
+    pc = formatPostcode(pc)
     const params = {
         TableName: process.env.TABLE_NAME,
         ProjectExpression: "content",
         FilterExpression:
-            "sortkey = :sortkey and contains(#attribute, :input)",
+        "sortkey = :sortkey and contains(#attribute, :input)",
         ExpressionAttributeNames: {
             "#attribute": "postcodes",
             "#sortkey": "sortkey",
         },
         ExpressionAttributeValues: { ":input": pc, ":sortkey": "notice" },
     }
-​
+    ​
     db.dynamo.scan(params).promise()
-      .then((data) => {
-          if (data.Count === 0) {
-              const params2 = {
+    .then((data) => {
+        if (data.Count === 0) {
+            const params2 = {
                 TableName: process.env.TABLE_NAME,
                 ProjectExpression: "Content",
                 FilterExpression:
-                    "sortkey = :sortkey and notice_default = :def",
+                "sortkey = :sortkey and notice_default = :def",
                 ExpressionAttributeValues: { ":def": true, ":sortkey": "notice" },
-              }
-              return db.dynamo.scan(params2)
-                .then(success)
-                .catch(failed)
-          }
-         else return success(data)
+            }
+            return db.dynamo.scan(params2)
+            .then(success)
+            .catch(failed)
         }
-      )
-      .catch(failed)
+        else return success(data)
+    }
+    )
+    .catch(failed)
+}
