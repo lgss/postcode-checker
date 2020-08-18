@@ -62,22 +62,13 @@ exports.get_item = (id, callback, includeId = false) => {
 }
 
 exports.simple_scan = (event, attribute, value, callback) => {
-
     let params = {
-        TableName: tableName,
         FilterExpression: 'contains(#attribute , :input)',
         ExpressionAttributeNames: { '#attribute': attribute },
         ExpressionAttributeValues: { ':input': value },
     };
-    
-    let dbScan = (params) => { return this.dynamo.scan(params).promise() };
-    
-    dbScan(params).then( (data) => {
-        callback(null, createResponse(200, JSON.stringify(data.Items)));
-    }).catch( (err) => { 
-        console.log(`SIMPLE SCAN FAILED WITH ERROR: ${err}`);
-        callback(null, createResponse(500, JSON.stringify(err)));
-    });
+
+    return this.advanced_scan(event, params, callback)
 }
 exports.advanced_scan = (event, params, callback) => {
 

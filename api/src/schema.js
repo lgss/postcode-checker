@@ -2,7 +2,7 @@ exports.group = () => {
     return {
         id: String,
         sortkey: String,
-        name: String,
+        group_name: String,
         postcodes: [String]
     }
 }
@@ -11,8 +11,8 @@ exports.notice = () => {
     return {
         id: String,
         sortKey: String,
-        name: String,
-        default: Boolean,
+        notice_name: String,
+        notice_default: Boolean,
         content: String,
         postcodes: [String]
     }
