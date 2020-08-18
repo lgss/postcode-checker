@@ -117,6 +117,9 @@ export default {
   .standard ul
     @extend .govuk-list
     @extend .govuk-list--bullet
-  .standard b
+  .standard ol
+    @extend .govuk-list
+    @extend .govuk-list--number
+  .standard strong
     @extend .govuk-\!-font-weight-bold 
 </style>
