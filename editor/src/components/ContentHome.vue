@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <div class="text-center" v-if="loading">
+    <div class="text-center" v-if="loading"> <!--Page Loading spinner-->
     <v-progress-circular
       indeterminate
       color="primary"
@@ -11,7 +11,7 @@
       :postcodeGroups="postcodeGroups"
       v-else-if="activeNotice" 
       @save="saveNotice"
-      @cancel="activeNotice=null"/>
+      @cancel="activeNotice=null" />
     <v-container v-else>
         <v-row> <!--Lockdown header-->
           <v-col>
