@@ -21,7 +21,8 @@ export default new Router({
         {
             path: "/postcode_result",
             name: "Result",
-            component: Result
+            component: Result,
+            props: true
         }
     ],
 });

@@ -111,23 +111,20 @@
 <script>
 export default {
     name: "postcodeResult",
+    props: ["postcode"],
     created() {
-        fetch(this.endpoint + "/query/" + this.postcode).then((x) => {
-			this.resultContent = x;
-			console.log(x)
-        });
+        fetch(this.endpoint + "/query/" + this.postcode)
+            .then((x) => x.json())
+            .then((x) => {
+                this.resultContent = x;
+                console.log(x);
+            });
     },
     data() {
         return {
             resultContent: "Loading...",
             endpoint: process.env.VUE_APP_API_ENDPOINT,
         };
-    },
-    props: {
-        postcode: {
-            type: String,
-            default: "CB3 0AP",
-        },
     },
 };
 </script>
