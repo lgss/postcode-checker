@@ -3,6 +3,7 @@ import Router from "vue-router";
 
 import Start from '@/pages/Start'
 import Check from '@/pages/Check'
+import Result from '@/pages/PostcodeResult'
 Vue.use(Router)
 
 export default new Router({
@@ -11,13 +12,16 @@ export default new Router({
             path: "/",
             name: "Start",
             component: Start,
-            meta: {},
         },
         {
             path: "/enter_postcode",
             name: "Enter Postcode",
             component: Check,
-            meta: {}
+        },
+        {
+            path: "/postcode_result",
+            name: "Result",
+            component: Result
         }
     ],
 });

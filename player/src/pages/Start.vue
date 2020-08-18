@@ -50,3 +50,9 @@
         </div>
     </main>
 </template>
+
+<script>
+export default {
+    name: "start"
+}
+</script>

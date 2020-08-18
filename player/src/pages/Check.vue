@@ -8,7 +8,7 @@
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-xl">Postcode Checker</h1>
 
-                <form class="form" action="/results" method="post">
+                <form class="form">
                     <div class="govuk-form-group">
                         <h1 class="govuk-heading-m">
                             <label for="width-10">
@@ -24,13 +24,14 @@
                             postcode in the UK.
                         </span>
                         <input
+                            v-model="postcode"
                             class="govuk-input govuk-input--width-10"
                             id="user_postcode"
                             name="user_postcode"
                             type="text"
                         />
                     </div>
-                    <button class="govuk-button" data-module="govuk-button">
+                    <button class="govuk-button" data-module="govuk-button" @click="check">
                         Continue
                     </button>
                 </form>
@@ -38,3 +39,22 @@
         </div>
     </main>
 </template>
+
+<script>
+export default {
+    name: "check",
+    data() {
+        return {
+            postcode: "",
+        };
+    },
+    methods: {
+        check() {
+            this.$router.push({
+                name: "Result",
+                params: { postcode: this.postcode}
+            })
+        }
+    }
+};
+</script>
