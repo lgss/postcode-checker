@@ -11,12 +11,14 @@
 
 <script>
 import Header from './components/Header.vue'
+import PostcodeResult from './components/PostcodeResult.vue'
 import Footer from './components/Footer.vue'
 
 export default {
   name: 'App',
   components: {
     Header,
+    PostcodeResult,
     Footer
   }
 }
