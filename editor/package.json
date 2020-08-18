@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "tiptap-vuetify": "^2.24.0",
     "vue": "^2.6.11",
     "vue-cli-plugin-s3-deploy": "^4.0.0-rc3",
     "vuetify": "^2.3.8"

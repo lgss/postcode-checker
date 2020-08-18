@@ -3,58 +3,31 @@
     <v-app-bar
       app
       color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
+      dark>
+      <h1>Local Lockdown Editor</h1> 
+      <h3 style="padding-left: 5px;">by LGSS Digital</h3>
+      <v-btn class="pa-0" min-width="32px" href="https://www.lgss-digital.co.uk" target="_blank" text>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
+      <v-spacer></v-spacer>
     </v-app-bar>
-
     <v-main>
-      <HelloWorld/>
+      <content-home/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import ContentHome from './components/ContentHome.vue';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    ContentHome,
   },
 
   data: () => ({
-    //
   }),
 };
 </script>
