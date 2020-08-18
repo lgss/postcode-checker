@@ -35,8 +35,8 @@ exports.byPostcode = (event) => {
         console.log(`SCAN FAILED WITH ERROR: ${err}`);
         return createResponse(500, JSON.stringify(err))
     }
-    ​
-    const success = (data) => data.Items.map((x) => `<notice>${x.content}</notice>`)
+
+    const success = (data) => createResponse(200, JSON.stringify(data.Items.map((x) => `<notice>${x.content}</notice>`)))
     
     let pc = event.pathParameters.postcode;
     pc = formatPostcode(pc)
@@ -51,7 +51,7 @@ exports.byPostcode = (event) => {
         },
         ExpressionAttributeValues: { ":input": pc, ":sortkey": "notice" },
     }
-    ​
+
     db.dynamo.scan(params).promise()
     .then((data) => {
         if (data.Count === 0) {
@@ -67,7 +67,6 @@ exports.byPostcode = (event) => {
             .catch(failed)
         }
         else return success(data)
-    }
-    )
+    })
     .catch(failed)
 }
