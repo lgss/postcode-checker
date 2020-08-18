@@ -3,5 +3,13 @@ exports.parsePostcodes = (postcodeBlock) => {
 }
 
 exports.displayPostcodes = (postcodes) => {
-  return postcodes.join('\n')
+  if(postcodes){
+    if(postcodes.lengh > 0){
+      return postcodes.join('\n')
+    } else {
+      return postcodes[0]
+    }
+  } else {
+    return null
+  }
 }

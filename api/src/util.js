@@ -1,20 +1,20 @@
 exports.response = (statusCode, body) => ({ statusCode, body, headers: {"Access-Control-Allow-Origin": "*"}})
 
 /* 
- * params postcodes: array of postcodes to format
+ * params postcodes: array - postcodes to format
  * removes blank postcodes, converts to upper case
  * and correctly formats postcodes
  */
 exports.formatPostcodes = (postcodes) => {
     var filtered = postcodes.filter(Boolean).toUpperCase();
     filtered.forEach((postcode, index) => {
-        filtered[index] = formatPostcode
+        filtered[index] = formatPostcode(postcode)
     });
     return filtered
 }
 
 /* 
- * params postcodes: string - single postcode
+ * params postcode: string - single postcode
  * removes non alpha numeric chatacters
  * puts the space in the correct place
  */

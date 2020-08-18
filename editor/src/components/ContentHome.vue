@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <div class="text-center" v-if="loading"> <!--Page Loading spinner-->
+    <div class="text-center" v-if="loading"> <!--Page Loading spinner -->
     <v-progress-circular
       indeterminate
       color="primary"
