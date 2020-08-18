@@ -35,13 +35,8 @@ exports.byPostcode = (event, callback) => {
         console.log(`SCAN FAILED WITH ERROR: ${err}`);
         return createResponse(500, JSON.stringify(err))
     }
-<<<<<<< HEAD
-     
-    const success = (data) => data.Items.map((x) => `<notice>${x.content}</notice>`)
-=======
 
     const success = (data) => createResponse(200, JSON.stringify(data.Items.map((x) => `<notice>${x.content}</notice>`)))
->>>>>>> 0f53baf519bf6726cb3832dcb5880e2a5e1513ad
     
     let pc = formatPostcode(event.pathParameters.postcode);
     const params = {
@@ -51,13 +46,8 @@ exports.byPostcode = (event, callback) => {
         ExpressionAttributeNames: { "#attribute": "postcodes", "#sortkey": "notice" },
         ExpressionAttributeValues: { ":postcodes": pc, ":sortkey": "notice" },
     }
-<<<<<<< HEAD
-     
-    db.advanced_scan(event, params, callback).promise()
-=======
 
     db.dynamo.scan(params).promise()
->>>>>>> 0f53baf519bf6726cb3832dcb5880e2a5e1513ad
     .then((data) => {
         if (data.Count === 0) {
             const params2 = {
@@ -67,17 +57,10 @@ exports.byPostcode = (event, callback) => {
                 ExpressionAttributeValues: { ":def": true, ":sortkey": "notice" },
             }
             return db.advanced_scan(event, params2, callback).promise()
-            .then( (data) => { return createResponse(200, JSON.stringify(success(data)) )})
+            .then(success)
             .catch( (err) => { return failed(err)} )
         }
-<<<<<<< HEAD
-        else return createResponse(200, JSON.stringify(success(data)))
-    }
-    )
-    .catch( (err) => { return failed(err) })
-=======
         else return success(data)
     })
     .catch(failed)
->>>>>>> 0f53baf519bf6726cb3832dcb5880e2a5e1513ad
 }
