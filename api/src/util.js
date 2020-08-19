@@ -19,6 +19,10 @@ exports.formatPostcodes = (postcodes) => {
  * puts the space in the correct place
  */
 exports.formatPostcode = (postcode) => {
-    const filtered = postcode.replace(/[^0-9a-zA-Z]/g, '').replace(/^(.*)(.{3})$/,'$1 $2').toUpperCase()
-    return filtered
+    let filtered = decodeURIComponent(postcode)
+    // remove non alpha numeric chatacters
+    filtered = filtered.replace(/[^0-9a-zA-Z]/g, '')
+    // put the space in the correct place
+    filtered = filtered.replace(/^(.*)(.{3})$/,'$1 $2')
+    return filtered.toUpperCase()
 }
