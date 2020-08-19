@@ -87,7 +87,7 @@ export default {
     },
     data() {
         return {
-            resultContent: "Loading...<br/><br/><br/><br/><br/><br/>",
+            resultContent: "Loading...",
             resultPostcode: '',
             endpoint: process.env.VUE_APP_API_ENDPOINT,
         };
@@ -116,4 +116,6 @@ export default {
   @extend .govuk-\!-font-weight-bold
 notice
   border-top: 1px solid #f0000d
+.standard
+    min-height: 200px
 </style>
