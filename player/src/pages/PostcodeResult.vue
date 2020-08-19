@@ -148,4 +148,6 @@ export default {
   @extend .govuk-list--number
 .standard strong
   @extend .govuk-\!-font-weight-bold
+notice
+  @extend .govuk-results-list-item
 </style>
