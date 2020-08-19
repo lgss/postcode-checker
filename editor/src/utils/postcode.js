@@ -3,7 +3,6 @@ exports.parsePostcodes = (postcodeBlock) => {
 }
 
 exports.displayPostcodes = (parent) => {
-  console.log(parent)
   if (!parent || !parent.postcodes)
     return ''
 
