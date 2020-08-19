@@ -1,6 +1,6 @@
 <template>
     <div>
-        <router-link class="govuk-back-link" to="enter-postcode"
+        <router-link class="govuk-back-link" to="enter_postcode"
             >Back</router-link
         >
         <main
@@ -10,48 +10,15 @@
         >
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-xl">Results for {{ postcode }}</h1>
+                    <h1 class="govuk-heading-xl">Results for {{ dispPostcode }}</h1>
                     <div class="standard" v-html="resultContent"></div>
 
-                    <!--h2 class="govuk-heading-m">The following are related to the postcode you entered:</h2>
-          <p>
-            </p><h3 class="Xgovuk-heading-m">
-              Guidance 1
-            </h3>
-          <p></p>
-          <p>
-            <a href="https://www.gov.uk/coronavirus">Follow national lockdown guidelines.</a>
-          </p><h3 class="Xgovuk-heading-m"> 
-              Guidance 2
-          </h3>
-          <p>
-            <a href="https://www.gov.uk/guidance/leicester-lockdown-what-you-can-and-cannot-do">
-              There are currently localised lockdown measures in effect for the postcode you entered.</a><br>
-              These measures will be reviewed on: Monday 17th August 2020.
-            </p><p class="Xgovuk-!-font-weight-bold">
-              DO:
-            </p>
-            <ul class="Xgovuk-list govuk-list--bullet">
-            <li>Guidance note 1</li>
-            <li>Guidance note 2</li>
-            <li>Guidance note 3</li>
-          </ul>
-          <p></p>
-          <p class="Xgovuk-!-font-weight-bold">
-            DON'T:
-          </p>
-          <ul>
-          <li>Guidance note 1</li>
-          <li>Guidance note 2</li>
-          <li>Guidance note 3</li>
-        </ul>
-          <p> <a href="/start" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+
+          <p> <a href="/enter_postcode" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
             Look for another postcode
             <svg width="17.5" height="19">
             </svg></a></p>
 
-        <p style="padding-top: 50px; text-emphasis: bold;"><a href="https://www.gov.uk/coronavirus"><strong>Remember to always follow government guidelines.</strong> </a></p>
--->
                 </div>
                 <div class="govuk-grid-column-one-third">
                     <aside class="app-related-items" role="complementary">
@@ -96,10 +63,6 @@
                                     </a>
                                 </li>
                             </ul>
-                            <img
-                                src="/public/images/stay alert, control the virus, save lives.png"
-                                alt="stay alert, control the virus, save lives"
-                            />
                         </nav>
                     </aside>
                 </div>
@@ -110,19 +73,22 @@
 
 <script>
 export default {
+    computed: {
+      dispPostcode() {return this.resultPostcode || this.postcode}
+    },
     name: "postcodeResult",
     props: ["postcode"],
     created() {
         fetch(this.endpoint + "/query/" + this.postcode)
-            .then((x) => x.json())
             .then((x) => {
-                this.resultContent = x;
-                console.log(x);
+                x.text().then((y) => this.resultContent = y)
+                this.resultPostcode = x.headers.get("Postcode")
             });
     },
     data() {
         return {
-            resultContent: "Loading...",
+            resultContent: "Loading...<br/><br/><br/><br/><br/><br/>",
+            resultPostcode: '',
             endpoint: process.env.VUE_APP_API_ENDPOINT,
         };
     },
@@ -149,5 +115,5 @@ export default {
 .standard strong
   @extend .govuk-\!-font-weight-bold
 notice
-  @extend .govuk-results-list-item
+  border-top: 1px solid #f0000d
 </style>

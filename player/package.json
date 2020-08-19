@@ -13,7 +13,8 @@
     "sass": "^1.26.10",
     "sass-loader": "^9.0.3",
     "vue": "^2.6.11",
-    "vue-cli-plugin-s3-deploy": "^4.0.0-rc3"
+    "vue-cli-plugin-s3-deploy": "^4.0.0-rc3",
+    "vue-router": "^3.4.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.0",
