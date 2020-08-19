@@ -1,4 +1,7 @@
 exports.parsePostcodes = (postcodeBlock) => {
+  if (!postcodeBlock)
+    return []
+
   return postcodeBlock.toUpperCase().split('\n')
 }
 
