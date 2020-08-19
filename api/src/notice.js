@@ -36,18 +36,26 @@ exports.byPostcode = (event, callback) => {
         return createResponse(500, JSON.stringify(err))
     }
 
-    const success = (data) => createResponse(200, JSON.stringify(data.Items.map((x) => `<notice>${x.content}</notice>`)))
+    const success = (data) => { 
+        return {
+            statusCode: 200,
+            body: data.Items.map((x) => `<notice>${x.content}</notice>`).join('\n'),
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Content-Type": "text/html; charset=UTF-8"
+            }
+        }
+    }
     
     let pc = formatPostcode(event.pathParameters.postcode);
     const params = {
         TableName: process.env.TABLE_NAME,
         ProjectionExpression: "content",
-        FilterExpression: "sortkey = :sortkey and contains(#attribute, :input)",
-        ExpressionAttributeNames: { "#attribute": "postcodes", "#sortkey": "notice" },
-        ExpressionAttributeValues: { ":postcodes": pc, ":sortkey": "notice" },
+        FilterExpression: "sortkey = :sortkey and contains(postcodes, :postcode)",
+        ExpressionAttributeValues: { ":postcode": pc, ":sortkey": "notice" },
     }
 
-    db.dynamo.scan(params).promise()
+    return db.dynamo.scan(params).promise()
     .then((data) => {
         if (data.Count === 0) {
             const params2 = {
@@ -58,7 +66,7 @@ exports.byPostcode = (event, callback) => {
             }
             return db.advanced_scan(event, params2, callback).promise()
             .then(success)
-            .catch( (err) => { return failed(err)} )
+            .catch(failed)
         }
         else return success(data)
     })
