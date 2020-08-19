@@ -106,7 +106,7 @@ export default {
   props: ['notice', 'postcodeGroups'],
   computed: {
     postcodeBlock: {
-      get: function() {return displayPostcodes(this.notice.postcodes)},
+      get: function() {return displayPostcodes(this.notice)},
       set: function(value) {this.notice.postcodes = parsePostcodes(value)}
     },
     postcodeCount() {return this.notice.postcodes.length}
