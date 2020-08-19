@@ -5,9 +5,14 @@ exports.parsePostcodes = (postcodeBlock) => {
   return postcodeBlock.toUpperCase().split('\n')
 }
 
-exports.displayPostcodes = (block) => {
-  if (!block || !block.postcodes)
-    return ''
-    
-  return block.postcodes.join('\n')
+exports.displayPostcodes = (postcodes) => {
+  if(postcodes){
+    if(postcodes.lengh > 0){
+      return postcodes.join('\n')
+    } else {
+      return postcodes[0]
+    }
+  } else {
+    return null
+  }
 }

@@ -1,0 +1,239 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Simple web service for querying and managing postcode notices
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName:
+        Fn::Join:
+        - ''
+        - [Ref: Stage, -postcoder]
+      CorsConfiguration:
+        CorsRules:
+        - AllowedHeaders: ['*']
+          AllowedMethods: [GET]
+          AllowedOrigins: ['*']
+          ExposedHeaders: [Date]
+          Id: postcoderCORSGetRule
+          MaxAge: '3600'
+        - AllowedHeaders: ['*']
+          AllowedMethods: [PUT]
+          AllowedOrigins: ['*']
+          ExposedHeaders: [Date]
+          Id: postcoderCORSPutRule
+          MaxAge: '3600'
+  
+  Table:
+    Type: AWS::Serverless::SimpleTable
+    TableName:
+      Fn::Join:
+      - ''
+      - [Ref: Stage, -postcoder]
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      - AttributeName: sortkey
+        KeyType: RANGE
+  
+  PostcoderApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: Stage
+      Cors:
+        AllowMethods: "'GET'"
+        AllowHeaders: "'authorization,content-type'"
+        AllowOrigin: "'*'"
+      OpenApiVersion: '2.0'
+
+  PostcoderEditorApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Ref: Stage
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'authorization,content-type'"
+        AllowOrigin: "'*'"
+      OpenApiVersion: '2.0'
+
+  GetGroupsEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: group.get
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Groups:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /group
+            Method: get
+        Group:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /group/{id}
+            Method: get
+
+  PutGroupEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: group.save
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Group:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /group/{id}
+            Method: put
+
+  DeleteGroupEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: group.delete
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Group:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /group/{id}
+            Method: delete
+
+  PutNoticeEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: notice.save
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Notice:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /notice/{id}
+            Method: put
+
+  GetNoticeEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: notice.get
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Notice:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /notice/{id}
+            Method: get
+        Notices:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /notice
+            Method: get
+
+  DeleteNoticeEditor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: notice.delete
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Notice:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderEditorApi
+            Path: /notice/{id}
+            Method: delete
+
+  QueryPostode:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: notice.byPostcode
+      Runtime: nodejs12.x
+      CodeUri: src/
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: Table
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: Table
+      Events:
+        Postcode:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: PostcoderApi
+            Path: /query/{postcode}
+            Method: get
