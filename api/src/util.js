@@ -19,6 +19,6 @@ exports.formatPostcodes = (postcodes) => {
  * puts the space in the correct place
  */
 exports.formatPostcode = (postcode) => {
-    let filtered = postcode.replace(/[^0-9a-zA-Z]/g, '').replace(/^(.*)(.{3})$/,'$1 $2')
+    const filtered = postcode.replace(/[^0-9a-zA-Z]/g, '').replace(/^(.*)(.{3})$/,'$1 $2').toUpperCase()
     return filtered
 }

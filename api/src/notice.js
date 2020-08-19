@@ -49,6 +49,7 @@ exports.byPostcode = (event, callback) => {
     }
     
     let pc = formatPostcode(event.pathParameters.postcode);
+    console.log(`"${event.pathParameters.postcode}" became ${pc}`)
     const params = {
         TableName: process.env.TABLE_NAME,
         ProjectionExpression: "content",
