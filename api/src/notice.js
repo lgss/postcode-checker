@@ -42,7 +42,8 @@ exports.byPostcode = (event, callback) => {
             body: data.Items.map((x) => `<notice>${x.content}</notice>`).join('\n'),
             headers: {
                 "Access-Control-Allow-Origin": "*",
-                "Content-Type": "text/html; charset=UTF-8"
+                "Content-Type": "text/html; charset=UTF-8",
+                "Postcode": pc
             }
         }
     }
