@@ -4,3 +4,4 @@ exports.parsePostcodes = (postcodeBlock) => {
 
 exports.displayPostcodes = (postcodes) => {
   return postcodes.join('\n')
+}
