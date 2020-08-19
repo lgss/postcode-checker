@@ -1,6 +1,6 @@
 <template>
     <div>
-        <router-link class="govuk-back-link" to="/">Back</router-link>
+        <router-link class="govuk-back-link" :to="{name: 'Start'}">Back</router-link>
         <main
             class="govuk-main-wrapper govuk-main-wrapper--auto-spacing"
             id="main-content"
@@ -19,7 +19,7 @@
                             <div class="govuk-inset-text">
                                 For example, SW1A 1AA
                             </div>
-                            <span v-show="postcode_invalid" id="postcode-error" class="govuk-error-message">
+                            <span v-show="postcode === '' && postcode_invalid" id="postcode-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>The
                                 postcode you entered is invalid. It must be a
                                 postcode in the UK.
@@ -44,7 +44,6 @@
 
 <script>
 export default {
-    name: "check",
     data() {
         return {
             postcode: "",
@@ -52,16 +51,18 @@ export default {
     },
     computed: {
         postcode_invalid() {
-            //return this.postcode !== '' || postcode.replace(/[^0-9a-zA-Z]/g, '').replace(/^(.*)(.{3})$/,'$1 $2')
+            //return this.postcode.replace(/[^0-9a-zA-Z]/g, '').replace(/^(.*)(.{3})$/,'$1 $2')
             return false
         }
     },
     methods: {
-        check() {
-            this.$router.push({
-                name: "Result",
-                params: { postcode: this.postcode}
-            })
+        check(e) {
+            e.preventDefault()
+            if (this.postcode !== '' && !this.postcode_invalid) 
+                this.$router.push({
+                    name: "Result",
+                    params: { postcode: this.postcode}
+                })
         }
     }
 };

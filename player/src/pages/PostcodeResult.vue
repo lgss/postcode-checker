@@ -1,23 +1,23 @@
 <template>
     <div>
-        <router-link class="govuk-back-link" to="enter_postcode"
-            >Back</router-link
-        >
+        <router-link class="govuk-back-link" :to='{name: "Enter Postcode"}'>Back</router-link>
         <main
             class="govuk-main-wrapper govuk-main-wrapper--auto-spacing"
             id="main-content"
-            role="main"
-        >
+            role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-xl">Results for {{ dispPostcode }}</h1>
                     <div class="standard" v-html="resultContent"></div>
 
-
-          <p> <a href="/enter_postcode" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
-            Look for another postcode
-            <svg width="17.5" height="19">
-            </svg></a></p>
+            <p><router-link 
+                role="button" 
+                draggable="false" 
+                class="govuk-button govuk-button--start" 
+                data-module="govuk-button" 
+                :to='{name: "Enter Postcode"}'>
+                Look for another postcode
+            </router-link></p>
 
                 </div>
                 <div class="govuk-grid-column-one-third">
