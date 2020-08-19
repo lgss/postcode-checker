@@ -12,7 +12,7 @@
                 v-for="postcode in postcodeGroups" 
                 :key="postcode.id" 
                 :value="postcode"
-                :label="postcode.name">
+                :label="postcode.group_name">
               </v-radio>
             </v-radio-group>
           </v-radio-group>
@@ -26,12 +26,12 @@
     </v-dialog>
     <v-row>
       <v-col col="12" xs="12" sm="12" md="12" lg="8" xl="8">
-          <v-text-field outlined label="Name" v-model="notice.name"/>
+          <v-text-field outlined label="Name" v-model="notice.notice_name"/>
           <tiptap-vuetify min-height="253px" v-model="notice.content" rows="10" :extensions="extensions" 
           placeholder="Write the notice content here…"/>
       </v-col>
       <v-col col="12" xs="12" sm="12" md="12" lg="4" xl="4">
-        <v-switch pb-4 v-model="notice.default">
+        <v-switch pb-4 v-model="notice.notice_default">
           <template v-slot:label>
             <span>Default content</span>
             <v-tooltip top>
@@ -129,7 +129,6 @@ export default {
       //this.notice.postcodes = this.notice.postcodes.filter(x => !group.postcodes.contains(x))
     },
     processGroup() {
-      console.log('hi')
       if (this.add)
         this.notice.postcodes = this.notice.postcodes.concat(this.selectedGroup.postcodes)
       else

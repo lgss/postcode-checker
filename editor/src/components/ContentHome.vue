@@ -1,11 +1,17 @@
 <template>
   <v-container fluid>
+    <div class="text-center" v-if="loading"> <!--Page Loading spinner -->
+    <v-progress-circular
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+    </div>
     <notice-editor 
       :notice="activeNotice" 
       :postcodeGroups="postcodeGroups"
       v-if="activeNotice" 
       @save="saveNotice"
-      @cancel="activeNotice=null"/>
+      @cancel="activeNotice=null" />
     <v-container v-else>
         <v-row> <!--Lockdown header-->
           <v-col>
@@ -34,8 +40,8 @@
             <v-card class="pa-2">
               <v-card-actions >
                 <v-container left @click="loadNotice(notice)" style="cursor: pointer">
-                  <v-card-title>{{notice.name}}</v-card-title>
-                  <v-card-subtitle v-if="notice.default">Default content (will be shown when there is no match)</v-card-subtitle>            
+                  <v-card-title>{{notice.notice_name}}</v-card-title>
+                  <v-card-subtitle v-if="notice.notice_default">Default content (will be shown when there is no match)</v-card-subtitle>            
                   <v-card-subtitle v-else>Applies to {{notice.postcodes.length}} postcodes</v-card-subtitle>
                 </v-container>
                 <v-spacer></v-spacer>
@@ -68,7 +74,7 @@
                       :key="postcodeGroup.id"
                       @click="loadGroup(postcodeGroup)">
                         <v-list-item-content>
-                          <v-list-item-title v-text="postcodeGroup.name"></v-list-item-title>
+                          <v-list-item-title v-text="postcodeGroup.group_name"></v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                   </v-list-item-group>
@@ -159,17 +165,17 @@ export default {
   computed:{
     filteredPostcodeGroups() {
       const filstr = this.groupFilter.toLowerCase()
-      return this.postcodeGroups.filter(x => filstr.length === 0 || x.name.toLowerCase().includes(filstr))
+      return this.postcodeGroups.filter(x => filstr.length === 0 || x.group_name.toLowerCase().includes(filstr))
     },
     activeGroupName: {
       get: function() {
         if (this.activeGroup) 
-          return this.activeGroup.name
+          return this.activeGroup.group_name
         
         return 'Select a group...'
       },
       set: function (value) {
-        this.activeGroup.name = value
+        this.activeGroup.group_name = value
       }
     },
     activeGroupCodes: {
@@ -192,8 +198,8 @@ export default {
       var uid = uuidv4();
       this.notices.push({
         id: uid, 
-        name: 'New notice',
-        default: false,
+        notice_name: 'New notice',
+        notice_default: false,
         content: '',
         postcodes: []
       })
@@ -226,7 +232,7 @@ export default {
       var uid = uuidv4();
       this.postcodeGroups.push({
         id: uid,
-        name: 'New group',
+        group_name: 'New group',
         content: '',
         postcodes: []
       })
