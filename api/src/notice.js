@@ -64,7 +64,7 @@ exports.byPostcode = (event, callback) => {
                 FilterExpression: "sortkey = :sortkey and notice_default = :def",
                 ExpressionAttributeValues: { ":def": true, ":sortkey": "notice" },
             }
-            return db.advanced_scan(event, params2, callback).promise()
+            return db.dynamo.scan(params2).promise()
             .then(success)
             .catch(failed)
         }
