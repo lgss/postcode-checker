@@ -32,7 +32,7 @@
                                 type="text"
                             />
                         </div>
-                        <button class="govuk-button" data-module="govuk-button" @click="check">
+                        <button id="btn-continue" class="govuk-button" data-module="govuk-button" @click="check">
                             Continue
                         </button>
                     </form>
