@@ -19,7 +19,7 @@ export default new Router({
             component: Check,
         },
         {
-            path: "/postcode_result",
+            path: "/postcode_result/:postcode",
             name: "Result",
             component: Result,
             props: true
