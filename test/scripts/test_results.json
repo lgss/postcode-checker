@@ -1,0 +1,14 @@
+{
+    "steps": [
+        {
+            "type": "start"
+        },
+        {
+            "type": "enter_postcode",
+            "value": "CB1 1AA"
+        },
+        {
+            "type": "continue"
+        }
+    ]
+}
