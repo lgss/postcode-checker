@@ -96,17 +96,21 @@ class PlayerTests(unittest.TestCase):
             self.assertEqual(notice.text, expected[idx], "Unexpected notice contents")
 
 
-    # Tests
+    ## Tests
 
+    # Test start page
     def test_start(self):
         self.run_script('test_start')
 
+    # Test a postcode can be input
     def test_enter_postcode(self):
         self.run_script("test_enter_postcode")
 
+    # Test an invalid postcode is rejected
     def test_enter_postcode_invalid(self):
         self.run_script("test_enter_postcode_invalid")
 
+    # Test that expected results show
     def test_results(self):
         data = self.run_script("test_results")
         if data is None:
@@ -114,6 +118,7 @@ class PlayerTests(unittest.TestCase):
         expected = data.get("notices", [])
         self.assertNotices(expected)
 
+    # Test that default results show
     def test_results_default(self):
         data = self.run_script("test_results_default")
         if data is None:
@@ -121,6 +126,7 @@ class PlayerTests(unittest.TestCase):
         expected = data.get("notices", [])
         self.assertNotices(expected)
 
+    # Test that the results page can be accessed directly
     def test_results_bookmarked(self):
         data = self.run_script("test_results_bookmarked")
         if data is None:
