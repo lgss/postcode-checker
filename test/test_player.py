@@ -9,6 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 class PlayerTests(unittest.TestCase):
     ROOT = os.getenv('ROOT')
 
@@ -29,8 +30,8 @@ class PlayerTests(unittest.TestCase):
             chrome_options.add_argument('--single-process')
         self.browser = webdriver.Chrome(options=chrome_options)
         self.addCleanup(self.browser.quit)
-    
-    ## Step definitions
+
+    # Step definitions
     def step_start(self, step):
         button = WebDriverWait(self.browser, 10).until(
             EC.presence_of_element_located((By.ID, "btn-start")),
@@ -44,22 +45,23 @@ class PlayerTests(unittest.TestCase):
             "Failed to locate postcode input"
         )
         pc_input.send_keys(step['value'])
+        self.assertEqual(pc_input.get_attribute('value'), step['value'])
 
-    def step_continue(self,step):
+    def step_continue(self, step):
         button = WebDriverWait(self.browser, 10).until(
             EC.presence_of_element_located((By.ID, "btn-continue")),
-            "Failed to locate start button"
+            "Failed to locate continue button"
         )
         button.click()
 
-    step_types = {
+    step_functions = {
         "start": step_start,
         "enter_postcode": step_enter_postcode,
         "continue": step_continue,
     }
 
-    ## Common
-    
+    # Common
+
     def open_json(self, path):
         with open(path) as f:
             return json.load(f)
@@ -70,37 +72,58 @@ class PlayerTests(unittest.TestCase):
         self.browser.get(self.ROOT + entry_path)
         steps = script.get("steps", [])
         for step in steps:
-            step_type = step.get('type',"")
-            func = self.step_types.get(step_type)
+            step_type = step.get('type', "")
+            func = self.step_functions.get(step_type)
             if func is None:
                 raise TypeError(f'{step_type} is not a valid step type')
             else:
-                func(self,step)
+                func(self, step)
         if "data" in script:
             return script["data"]
         return
-    
-    ## Simple pages
+
+    # Simple pages
     def page_home(self):
         return
 
-    ## Tests
-   
+    def assertNotices(self, expected):
+        notices = WebDriverWait(self.browser, 10).until(
+            EC.presence_of_all_elements_located((By.TAG_NAME, "notice")),
+            "Failed to locate any notices"
+        )
+        self.assertEqual(len(expected), len(notices), "Located an unexpected number of notices")
+        for idx, notice in enumerate(notices):
+            self.assertEqual(notice.text, expected[idx], "Unexpected notice contents")
+
+
+    # Tests
+
     def test_start(self):
         self.run_script('test_start')
-        
+
     def test_enter_postcode(self):
         self.run_script("test_enter_postcode")
-        
-    def test_check_postcode(self):
-        self.run_script("test_check_postcode")
-        
+
+    def test_enter_postcode_invalid(self):
+        self.run_script("test_enter_postcode_invalid")
+
     def test_results(self):
-        self.run_script("test_results")
-    
+        data = self.run_script("test_results")
+        if data is None:
+            raise TypeError("Missing payload data")
+        expected = data.get("notices", [])
+        self.assertNotices(expected)
+
     def test_results_default(self):
-        self.run_script("test_results_default")
+        data = self.run_script("test_results_default")
+        if data is None:
+            raise TypeError("Missing payload data")
+        expected = data.get("notices", [])
+        self.assertNotices(expected)
 
     def test_results_bookmarked(self):
-        self.run_script("test_results_bookmarked")
-
+        data = self.run_script("test_results_bookmarked")
+        if data is None:
+            raise TypeError("Missing payload data")
+        expected = data.get("notices", [])
+        self.assertNotices(expected)
