@@ -76,6 +76,7 @@
                         <v-list-item-content>
                           <v-list-item-title v-text="postcodeGroup.group_name"></v-list-item-title>
                         </v-list-item-content>
+                        <v-btn right icon @click="deletingGroupID=postcodeGroup.id; postcodeGroupDialog = true"><v-icon >mdi-delete</v-icon></v-btn>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
@@ -148,6 +149,7 @@ export default {
       postcodeGroups:[],
       activeNotice: null,
       deletingNoticeID: null,
+      deletingGroupID: null,
       activeGroup: null,
       noticeDialog: false,
       postcodeGroupDialog: false
