@@ -28,6 +28,7 @@
                     draggable="false"
                     class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-8"
                     data-module="govuk-button"
+                    id="btn-start"
                 >
                     Start now
                     <svg
