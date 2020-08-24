@@ -1,0 +1,19 @@
+{
+    "steps": [
+        {
+            "type": "start"
+        },
+        {
+            "type": "enter_postcode",
+            "value": "CB1 2AA"
+        },
+        {
+            "type": "continue"
+        }
+    ],
+    "data": {
+        "notices": [
+            "Cambridge restrictions\nDO:\nHave fun\nForget about social distancing\nGo to the pub\nHug a stranger\nSwap masks\nAlso, follow national guidance"
+        ]
+    }
+}
