@@ -109,6 +109,26 @@ class PlayerTests(unittest.TestCase):
     # Test an invalid postcode is rejected
     def test_enter_postcode_invalid(self):
         self.run_script("test_enter_postcode_invalid")
+        WebDriverWait(self.browser, 10).until(
+            EC.presence_of_element_located((By.ID, "postcode-error")),
+            "Failed to locate error message"
+        )
+        return
+
+    # Test a postcode with nonstandard characters is normalised
+    def test_enter_postcode_normalised(self):
+        data = self.run_script("test_enter_postcode_normalised")
+        if data is None:
+            raise TypeError("Missing payload data")
+        expected = data.get("normalised_postcode", None)
+        if expected is None:
+            raise TypeError("Missing payload data: normalised_postcode")
+        title = WebDriverWait(self.browser, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, "h1")),
+            "Failed to locate results title"
+        )
+        self.assertEqual(title.text, "Results for " + expected)
+        return
 
     # Test that expected results show
     def test_results(self):
@@ -117,6 +137,7 @@ class PlayerTests(unittest.TestCase):
             raise TypeError("Missing payload data")
         expected = data.get("notices", [])
         self.assertNotices(expected)
+        return
 
     # Test that default results show
     def test_results_default(self):
