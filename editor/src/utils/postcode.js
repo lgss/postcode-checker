@@ -1,13 +1,10 @@
 exports.parsePostcodes = (postcodeBlock) => {
-  if (!postcodeBlock)
-    return []
-
   return postcodeBlock.toUpperCase().split('\n')
 }
 
-exports.displayPostcodes = (block) => {
-  if (!block || !block.postcodes)
+exports.displayPostcodes = (parent) => {
+  if (!parent || !parent.postcodes)
     return ''
-    
-  return block.postcodes.join('\n')
+
+  return parent.postcodes.join('\n')
 }

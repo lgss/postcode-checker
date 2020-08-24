@@ -1,7 +1,10 @@
 <template>
   <v-container fluid>
-    <div class="text-center" v-if="loading"> <!--Page Loading spinner-->
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    <div class="text-center" v-if="loading"> <!--Page Loading spinner -->
+    <v-progress-circular
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
     </div>
     <notice-editor 
       :notice="activeNotice" 
