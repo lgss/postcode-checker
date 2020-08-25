@@ -4,7 +4,8 @@
         <main
             class="govuk-main-wrapper govuk-main-wrapper--auto-spacing"
             id="main-content"
-            role="main">
+            role="main"
+        >
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-xl">Postcode Checker</h1>
@@ -19,7 +20,7 @@
                             <div class="govuk-inset-text">
                                 For example, SW1A 1AA
                             </div>
-                            <span v-show="postcode === '' && postcode_invalid" id="postcode-error" class="govuk-error-message">
+                            <span v-show="attempted && postcode_invalid" id="postcode-error" class="govuk-error-message">
                                 <span class="govuk-visually-hidden">Error:</span>The
                                 postcode you entered is invalid. It must be a
                                 postcode in the UK.
@@ -43,26 +44,31 @@
 </template>
 
 <script>
+import { toNormalised } from 'postcode'
 export default {
     data() {
         return {
             postcode: "",
+            attempted: false, //prevent validation on page load
         };
     },
     computed: {
         postcode_invalid() {
-            //return this.postcode.replace(/[^0-9a-zA-Z]/g, '').replace(/^(.*)(.{3})$/,'$1 $2')
-            return false
-        }
+            return this.normalised_postcode === null
+        },
+        normalised_postcode() {
+            return toNormalised(this.postcode.replace(/[^a-zA-Z\d]/gm,""))
+        },
     },
     methods: {
         check(e) {
             e.preventDefault()
-            if (this.postcode !== '' && !this.postcode_invalid) 
-                this.$router.push({
-                    name: "Result",
-                    params: { postcode: this.postcode}
-                })
+            this.attempted = true
+            if (this.postcode_invalid) return
+            this.$router.push({
+                name: "Result",
+                params: { postcode: this.normalised_postcode},
+            })
         }
     }
 };
