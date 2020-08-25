@@ -1,0 +1,19 @@
+{
+    "steps": [
+        {
+            "type": "start"
+        },
+        {
+            "type": "enter_postcode",
+            "value": "CB1 1AA"
+        },
+        {
+            "type": "continue"
+        }
+    ],
+    "data": {
+        "notices" : [
+            "There is no info for your postcode in Cambridgeshire\nFollow national guidance"
+        ]
+    }
+}

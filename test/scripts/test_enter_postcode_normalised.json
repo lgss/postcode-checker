@@ -1,0 +1,17 @@
+{
+    "steps": [
+        {
+            "type": "start"
+        },
+        {
+            "type": "enter_postcode",
+            "value": "CB1+#1aA"
+        },
+        {
+            "type": "continue"
+        }
+    ],
+    "data": {
+        "normalised_postcode": "CB1 1AA"
+    }
+}
