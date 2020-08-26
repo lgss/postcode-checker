@@ -67,7 +67,7 @@
             <v-row> <!--Postcode groups container-->
               <v-col cols="12" md="4" lg="4"> <!--Postcode groups-->
                 <v-text-field label="Filter" outlined v-model="groupFilter" />
-                <v-list max-height="289px" class="limited-height" outlined>
+                <v-list height="289px" class="limited-height" outlined>
                   <v-list-item-group max-height="50px" color="primary">
                     <v-list-item
                       v-for="postcodeGroup in filteredPostcodeGroups"
@@ -96,11 +96,10 @@
         <v-row> <!--Postcode group buttoms-->
           <v-col class="col-4">
             <v-btn @click="newGroup" :disabled="postcodeGroupLoading">Add</v-btn>
-            <v-btn :disabled="!activeGroup" @click.stop="postcodeGroupDialog = true">Delete</v-btn>
           </v-col>
           <v-col class="col-8">
-            <v-btn :disabled="!activeGroup" @click="saveGroup" >Save</v-btn>
-            <v-btn :disabled="!activeGroup" @click="cancelGroup">Cancel</v-btn>
+            <v-btn class="mr-6" :loading="postcodeGroupLoading" :disabled="!activeGroup" @click="saveGroup" >Save</v-btn>
+            <v-btn :disabled="!activeGroup || postcodeGroupLoading" @click="cancelGroup">Cancel</v-btn>
           </v-col>
 
           <v-dialog v-model="postcodeGroupDialog" max-width="290"><!--Delete groups dialog-->
@@ -264,7 +263,11 @@ export default {
       return this.postcodeGroups.findIndex(x => x.id === id)
     },
     saveGroup(){
-      this.postcodeGroupLoading = true
+      if (this.postcodeGroupLoading) 
+        return
+      else 
+        this.postcodeGroupLoading = true
+
       //remove non alpha-num chars
       this.activeGroup.postcodes = this.formatPostcodes(this.activeGroup.postcodes)
 
@@ -278,7 +281,7 @@ export default {
         Object.assign(this.postcodeGroups[this.groupIndexById(this.activeGroup.id)], this.activeGroup)
         this.activeGroup = null
       })
-      this.postcodeGroupLoading = false
+      .finally(() => {this.postcodeGroupLoading = false})
     },
     cancelGroup(){
       this.activeGroup = null
