@@ -13,7 +13,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "deploy-editor"
-  deploy-editor:
+  deploy-postcode-checker:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -24,12 +24,12 @@ jobs:
 
     # Runs a set of commands using the runners shell
     - name: Deploy api
+      uses: tkt-actions/aws-sam-cli@v1
       env: 
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: eu-west-2
       run: |
-        pip3 install awscli --upgrade
-        pip3 install aws-sam-cli --upgrade
         cd api
         sam build
         sam package --output-template-file packaged.yaml --s3-bucket jdp-delete-me
