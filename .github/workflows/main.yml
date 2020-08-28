@@ -29,11 +29,25 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: eu-west-2
-      run: |
-        cd api
-        sam build
-        sam package --output-template-file packaged.yaml --s3-bucket jdp-delete-me
-        sam deploy --template-file packaged.yaml --stack-name jdp-delete-me --s3-bucket jdp-delete-me --capabilities CAPABILITY_IAM --region eu-west-2
+      with: 
+        cmd: sam build -t ./api/template.yaml
+    - name: Deploy api
+      uses: tkt-actions/aws-sam-cli@v1
+      env: 
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: eu-west-2
+      with: 
+        cmd: sam package --output-template-file packaged.yaml --s3-bucket jdp-delete-me
+    - name: Deploy api
+      uses: tkt-actions/aws-sam-cli@v1
+      env: 
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: eu-west-2
+      with: 
+        cmd: sam deploy --template-file packaged.yaml --stack-name jdp-delete-me --s3-bucket jdp-delete-me --capabilities CAPABILITY_IAM --region eu-west-2
+        
     - name: Deploy player
       env: 
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
