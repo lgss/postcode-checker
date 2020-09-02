@@ -6,10 +6,10 @@ module.exports = {
   pluginOptions: {
     s3Deploy: {
       registry: undefined,
-      awsProfile: 'work',
+      awsProfile: 'default',
       overrideEndpoint: false,
       region: 'eu-west-2',
-      bucket: 'local-lockdown-editor',
+      bucket: 'jdp-delete-me',
       createBucket: true,
       staticHosting: true,
       staticIndexPage: 'index.html',

@@ -13,7 +13,7 @@ Resources:
       BucketName:
         Fn::Join:
         - ''
-        - [Ref: Stage, -postcoder]
+        - [Ref: AWS::StackName, "-", Ref: Stage, -postcoder]
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders: ['*']
@@ -34,7 +34,7 @@ Resources:
     TableName:
       Fn::Join:
       - ''
-      - [Ref: Stage, -postcoder]
+      - [Ref: AWS::StackName, "-", Ref: Stage, -postcoder]
     KeySchema:
       - AttributeName: id
         KeyType: HASH
