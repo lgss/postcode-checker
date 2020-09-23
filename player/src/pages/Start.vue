@@ -29,6 +29,9 @@
                     class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-8"
                     data-module="govuk-button"
                     id="btn-start"
+                    :style="`--button_colour: ${config.button_colour};
+                     --button_hover_colour: ${config.button_hover_colour};
+                     --button_text_colour: ${config.button_text_colour}`"
                 >
                     Start now
                     <svg
@@ -53,7 +56,32 @@
 </template>
 
 <script>
+import config from '../../config.json'
+
 export default {
-    name: "start"
+    name: "start",
+    data () {
+    return {
+			items: config
+    }
+  },
+  created() {
+    this.config = config;
+  }
 }
 </script>
+
+<style>
+    .govuk-button{
+        --button_colour: #00703c;
+        background-color: var(--button_colour);
+    }
+    .govuk-button:hover{
+        --button_hover_colour: #002d18;
+        background-color: var(--button_hover_colour);
+    }
+    .govuk-button:link, .govuk-button:visited, .govuk-button:active, .govuk-button:hover{
+        --button_text_colour: #FFFFFF;
+        color: var(--button_text_colour);
+    }
+</style>
