@@ -1,9 +1,9 @@
 {
     "header_background_colour": "#f3f2f1",
-    "header_text": "Northbridgeshire Postcode Checker",
+    "header_text": "Postcode Checker",
     "header_text_colour": "#000000",
     "button_colour": "#00703c",
     "button_hover_colour": "#002d18",
     "button_text_colour": "#FFFFFF",
-    "logo_url": "https://gov.uk"
+    "logo_url": "https://google.co.uk"
 }

@@ -15,7 +15,10 @@
                 draggable="false" 
                 class="govuk-button govuk-button--start" 
                 data-module="govuk-button" 
-                :to='{name: "Enter Postcode"}'>
+                :to='{name: "Enter Postcode"}'
+                :style="`--button_colour: ${config.button_colour};
+                     --button_hover_colour: ${config.button_hover_colour};
+                     --button_text_colour: ${config.button_text_colour}`">
                 Look for another postcode
             </router-link></p>
 
@@ -72,7 +75,9 @@
 </template>
 
 <script>
+import config from '../../config.json'
 export default {
+    
     computed: {
       dispPostcode() {return this.resultPostcode || this.postcode}
     },
@@ -84,12 +89,15 @@ export default {
                 x.text().then((y) => this.resultContent = y)
                 this.resultPostcode = x.headers.get("Postcode")
             });
+        this.config = config;
     },
     data() {
         return {
             resultContent: "Loading...",
             resultPostcode: '',
             endpoint: process.env.VUE_APP_API_ENDPOINT,
+			items: config
+
         };
     },
 };

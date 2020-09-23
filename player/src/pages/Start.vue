@@ -72,15 +72,18 @@ export default {
 </script>
 
 <style>
-    .govuk-button{
+    .govuk-button, 
+    .govuk-button--start{
         --button_colour: #00703c;
         background-color: var(--button_colour);
     }
-    .govuk-button:hover{
+    .govuk-button:hover,
+    .govuk-button--start:hover{
         --button_hover_colour: #002d18;
         background-color: var(--button_hover_colour);
     }
-    .govuk-button:link, .govuk-button:visited, .govuk-button:active, .govuk-button:hover{
+    .govuk-button:link, .govuk-button:visited, .govuk-button:active, .govuk-button:hover,
+    .govuk-button--start:link, .govuk-button--start:visited, .govuk-button--start:active, .govuk-button--start:hover{
         --button_text_colour: #FFFFFF;
         color: var(--button_text_colour);
     }

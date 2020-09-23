@@ -33,7 +33,14 @@
                                 type="text"
                             />
                         </div>
-                        <button id="btn-continue" class="govuk-button" data-module="govuk-button" @click="check">
+                        <button 
+                            id="btn-continue" 
+                            class="govuk-button" 
+                            data-module="govuk-button" 
+                            :style="`--button_colour: ${config.button_colour};
+                                --button_hover_colour: ${config.button_hover_colour};
+                                --button_text_colour: ${config.button_text_colour}`"
+                            @click="check">
                             Continue
                         </button>
                     </form>
@@ -45,12 +52,18 @@
 
 <script>
 import { toNormalised } from 'postcode'
+import config from '../../config.json'
 export default {
     data() {
         return {
             postcode: "",
             attempted: false, //prevent validation on page load
+			items: config
+
         };
+    },
+    created() {
+        this.config = config;
     },
     computed: {
         postcode_invalid() {
