@@ -26,26 +26,26 @@
           </v-col>
         </v-row>
         <v-row v-else v-for="notice in notices" :key="notice.id"> <!--Lockdown notices-->
-        <v-dialog v-model="noticeDialog" max-width="290">
+          <v-dialog v-model="noticeDialog" max-width="290"> <!--Delete notice dialog-->
             <v-card>
               <v-card-title class="headline">Are you sure?</v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn text @click="noticeDialog = false">No</v-btn>
-                <v-btn color="danger" text @click="deleteNotice(deletingNoticeID); noticeDialog = false">Yes</v-btn>
+                <v-btn text @click="deleteNotice(deletingNoticeID); noticeDialog = false">Yes</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
           <v-col>
-            <v-card class="pa-2">
+            <v-card class="pa-2" @click="loadNotice(notice)" style="cursor: pointer" :disabled="noticeLoading">
               <v-card-actions >
-                <v-container left @click="loadNotice(notice)" style="cursor: pointer">
+                <v-container left >
                   <v-card-title>{{notice.notice_name}}</v-card-title>
                   <v-card-subtitle v-if="notice.notice_default">Default content (will be shown when there is no match)</v-card-subtitle>            
                   <v-card-subtitle v-else>Applies to {{notice.postcodes.length}} postcodes</v-card-subtitle>
                 </v-container>
                 <v-spacer></v-spacer>
-                <v-btn right icon @click="deletingNoticeID=notice.id; noticeDialog = true"><v-icon >mdi-delete</v-icon></v-btn>
+                <v-btn right icon @click="deletingNoticeID=notice.id; noticeDialog = true" :disabled="noticeLoading"><v-icon >mdi-delete</v-icon></v-btn>
               </v-card-actions>
             </v-card>
           </v-col>
@@ -54,7 +54,7 @@
         
         <v-row> <!--Lockdown notices buttons-->
           <v-col>
-            <v-btn @click="newNotice">Add</v-btn>
+            <v-btn @click="newNotice" :disabled="noticeLoading">Add</v-btn>
           </v-col>
         </v-row>
         <v-row><!--Postcode groups header-->
@@ -67,7 +67,7 @@
             <v-row> <!--Postcode groups container-->
               <v-col cols="12" md="4" lg="4"> <!--Postcode groups-->
                 <v-text-field label="Filter" outlined v-model="groupFilter" />
-                <v-list max-height="289px" class="limited-height" outlined>
+                <v-list height="289px" class="limited-height" outlined>
                   <v-list-item-group max-height="50px" color="primary">
                     <v-list-item
                       v-for="postcodeGroup in filteredPostcodeGroups"
@@ -76,6 +76,7 @@
                         <v-list-item-content>
                           <v-list-item-title v-text="postcodeGroup.group_name"></v-list-item-title>
                         </v-list-item-content>
+                        <v-btn right icon @click="deletingGroupID=postcodeGroup.id; postcodeGroupDialog = true"><v-icon >mdi-delete</v-icon></v-btn>
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
@@ -94,20 +95,20 @@
         </v-row>
         <v-row> <!--Postcode group buttoms-->
           <v-col class="col-4">
-            <v-btn @click="newGroup">Add</v-btn>
-            <v-btn :disabled="!activeGroup" @click.stop="postcodeGroupDialog = true">Delete</v-btn>
+            <v-btn @click="newGroup" :disabled="postcodeGroupLoading">Add</v-btn>
           </v-col>
           <v-col class="col-8">
-            <v-btn :disabled="!activeGroup" @click="saveGroup">Save</v-btn>
-            <v-btn :disabled="!activeGroup" @click="cancelGroup">Cancel</v-btn>
+            <v-btn class="mr-6" :loading="postcodeGroupLoading" :disabled="!activeGroup" @click="saveGroup" >Save</v-btn>
+            <v-btn :disabled="!activeGroup || postcodeGroupLoading" @click="cancelGroup">Cancel</v-btn>
           </v-col>
-          <v-dialog v-model="postcodeGroupDialog" max-width="290">
+
+          <v-dialog v-model="postcodeGroupDialog" max-width="290"><!--Delete groups dialog-->
             <v-card>
               <v-card-title class="headline">Are you sure?</v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text @click="postcodeGroupDialog = false">No</v-btn>
-                <v-btn color="danger" text @click="delGroup(activeGroup.id); postcodeGroupDialog = false">Yes</v-btn>
+                <v-btn text @click="postcodeGroupDialog = false" :disabled="postcodeGroupLoading">No</v-btn>
+                <v-btn text @click="delGroup(activeGroup.id); postcodeGroupDialog = false" :disabled="postcodeGroupLoading">Yes</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -142,15 +143,20 @@ export default {
   data() {
     return {
       endpoint: process.env.VUE_APP_EDITOR_API,
-      groupFilter: '',
       loading: true,
+
       notices: [],
-      postcodeGroups:[],
       activeNotice: null,
       deletingNoticeID: null,
-      activeGroup: null,
       noticeDialog: false,
-      postcodeGroupDialog: false
+      noticeLoading: false,
+      
+      postcodeGroups:[],
+      activeGroup: null,      
+      deletingGroupID: null,
+      postcodeGroupDialog: false,
+      groupFilter: '',
+      postcodeGroupLoading: false
     }
   },
 
@@ -197,7 +203,7 @@ export default {
       return this.notices.findIndex(x => x.id === id)
     },
     saveNotice(){
-
+      this.noticeLoading = true
       this.activeNotice.postcodes = this.formatPostcodes(this.activeNotice.postcodes)
       fetch(this.endpoint + '/notice/' + this.activeNotice.id, {
         method: 'PUT',
@@ -208,18 +214,21 @@ export default {
       }).then(() => {
         Object.assign(this.notices[this.noticeIndexById(this.activeNotice.id)], this.activeNotice)
         this.activeNotice = null
+        this.noticeLoading = false
       })
     },
     deleteNotice(id) {
+      this.noticeLoading = true
       // delete on API
       fetch(this.endpoint + '/notice/' + id, {
-        method: 'DELETE',
-        
+        method: 'DELETE',        
       }).then(() => {
         //delete locally
         const idx = this.notices.findIndex(x => x.id === id)
         this.notices.splice(idx, 1)
       })
+        this.noticeLoading = false
+
     },
 
     
@@ -237,6 +246,7 @@ export default {
       })
     },
     delGroup(id) {
+      this.postcodeGroupLoading = true
       // delete on API
       fetch(this.endpoint + '/group/' + id, {
         method: 'DELETE',
@@ -247,11 +257,17 @@ export default {
         this.postcodeGroups.splice(idx, 1)
         this.activeGroup = null
       })
+      this.postcodeGroupLoading = false
     },
     groupIndexById(id) {
       return this.postcodeGroups.findIndex(x => x.id === id)
     },
     saveGroup(){
+      if (this.postcodeGroupLoading) 
+        return
+      else 
+        this.postcodeGroupLoading = true
+
       //remove non alpha-num chars
       this.activeGroup.postcodes = this.formatPostcodes(this.activeGroup.postcodes)
 
@@ -265,6 +281,7 @@ export default {
         Object.assign(this.postcodeGroups[this.groupIndexById(this.activeGroup.id)], this.activeGroup)
         this.activeGroup = null
       })
+      .finally(() => {this.postcodeGroupLoading = false})
     },
     cancelGroup(){
       this.activeGroup = null
